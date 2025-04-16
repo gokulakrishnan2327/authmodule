@@ -10,6 +10,7 @@ import AuthLayout from './layouts/AuthLayout';
 import LoginPage from './features/auth/pages/LoginPage';
 import SignupPage from './features/auth/pages/SignupPage';
 import ForgotPassword from './features/auth/pages/ForgotPassword';
+import CheckYourMailPage from './features/auth/pages/CheckYourMailPage'; // Import the new page
 import ResetPassword from './features/auth/pages/ResetPassword';
 import OnboardingPage from './features/auth/pages/OnboardingPage';
 import EmailVerification from './components/EmailVerification';
@@ -47,6 +48,7 @@ const App = () => {
           <Route path="login" element={<LoginPage />} />
           <Route path="signup" element={<SignupPage />} />
           <Route path="forgot-password" element={<ForgotPassword />} />
+          <Route path="check-mail" element={<CheckYourMailPage />} /> {/* Add the new route */}
           <Route path="reset-password" element={<ResetPassword />} />
           <Route path="verify-email" element={<EmailVerification />} />
         </Route>

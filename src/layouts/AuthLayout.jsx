@@ -1,25 +1,24 @@
-// src/layouts/AuthLayout.jsx
 import React from 'react';
-import { Link ,Outlet } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 const AuthLayout = ({ children }) => {
   const { error, successMessage } = useSelector((state) => state.auth);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-primary-dark flex flex-col items-center justify-center px-4 sm:px-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-primary-dark flex flex-col items-center justify-center p-4 sm:p-6">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <Link to="/" className="flex justify-center">
             <img 
               src="/logo.svg" 
-              alt="Fintech Dashboard Logo" 
+              alt="Pitchmatter Logo" 
               className="h-12 w-auto" 
             />
           </Link>
           <h2 className="mt-6 text-3xl font-bold text-white">
-Pitchmatter          </h2>
-         
+            Pitchmatter
+          </h2>
         </div>
 
         {/* Error Alert */}
@@ -54,17 +53,16 @@ Pitchmatter          </h2>
           </div>
         )}
 
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          {children}
+        <div className="bg-white py-8 p-4 shadow sm:rounded-lg sm:p-10">
+          {children || <Outlet />}
         </div>
 
         <div className="text-center mt-4">
           <p className="text-sm text-gray-300">
-            &copy; {new Date().getFullYear()} Fintech Dashboard. All rights reserved.
+            &copy; {new Date().getFullYear()} Pitchmatter. All rights reserved.
           </p>
         </div>
       </div>
-       {/* <Outlet />  */}
     </div>
   );
 };

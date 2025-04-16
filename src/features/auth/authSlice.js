@@ -211,20 +211,23 @@ const authSlice = createSlice({
       .addCase(forgotPassword.pending, (state) => {
         state.loading = true;
         state.error = null;
+        state.successMessage = null;
       })
-      .addCase(forgotPassword.fulfilled, (state) => {
+      .addCase(forgotPassword.fulfilled, (state, action) => {
         state.loading = false;
-        state.successMessage = 'Password reset link sent to your email!';
+        state.successMessage = 'Password reset link sent successfully';
+        state.email = action.payload.email; // Store the email
       })
       .addCase(forgotPassword.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload?.message || 'Failed to send password reset link';
+        state.error = action.payload;
       })
       
       // Reset password
       .addCase(resetPassword.pending, (state) => {
         state.loading = true;
         state.error = null;
+        state.successMessage = null;
       })
       .addCase(resetPassword.fulfilled, (state) => {
         state.loading = false;

@@ -1,4 +1,3 @@
-/* src/index.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -24,10 +23,10 @@
   --color-gray-900: #111827;
 }
 
-/* Custom utility classes */
-/* @layer components {
+/* In Tailwind v4, we need to adjust our @layer components */
+@layer components {
   .btn {
-    @apply inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm;
+    @apply inline-flex items-center justify-center p-2 border border-transparent text-sm font-medium rounded-md shadow-sm;
   }
   
   .btn-primary {
@@ -47,7 +46,7 @@
   }
   
   .form-input {
-    @apply block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm;
+    @apply block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary focus:border-primary sm:text-sm;
   }
   
   .form-label {
@@ -57,27 +56,26 @@
   .form-error {
     @apply mt-1 text-sm text-error;
   }
-   */
-  /* src/index.css (continued) */
+  
   /* Card styles */
-  /* .card {
+  .card {
     @apply bg-white shadow-sm rounded-md overflow-hidden;
   }
   
   .card-header {
-    @apply px-4 py-5 border-b border-gray-200 sm:px-6;
+    @apply p-4 py-5 border-b border-gray-200 sm:p-6;
   }
   
   .card-body {
-    @apply px-4 py-5 sm:p-6;
+    @apply p-4 py-5 sm:p-6;
   }
   
   .card-footer {
-    @apply px-4 py-4 sm:px-6 border-t border-gray-200;
-  } */
+    @apply p-4 py-4 sm:p-6 border-t border-gray-200;
+  }
   
   /* Alert styles */
-  /* .alert {
+  .alert {
     @apply p-4 rounded-md mb-4;
   }
   
@@ -96,4 +94,4 @@
   .alert-error {
     @apply bg-red-50 text-red-700 border border-red-300;
   }
-} */
+}
