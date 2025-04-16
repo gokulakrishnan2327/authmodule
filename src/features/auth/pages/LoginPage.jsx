@@ -9,14 +9,14 @@ const LoginPage = () => {
     <AuthLayout>
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="text-center text-3xl font-extrabold text-gray-900">
-          Sign in to your account
-        </h2>
+        Welcome Back!        </h2>
         <p className="mt-2 text-center text-sm text-gray-600">
-          Or{' '}
-          <Link to="/auth/signup" className="font-medium text-indigo-600 hover:text-indigo-500">
-            create a new account
-          </Link>
+        You're just one step away from accessing your account
         </p>
+      </div>
+      <div>
+      {/* Sign in with
+      create 3 button google,appl,linkdin */}
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">

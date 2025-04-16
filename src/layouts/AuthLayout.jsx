@@ -18,11 +18,8 @@ const AuthLayout = ({ children }) => {
             />
           </Link>
           <h2 className="mt-6 text-3xl font-bold text-white">
-            Fintech Dashboard
-          </h2>
-          <p className="mt-2 text-sm text-gray-300">
-            Secure financial management platform
-          </p>
+Pitchmatter          </h2>
+         
         </div>
 
         {/* Error Alert */}
@@ -67,7 +64,7 @@ const AuthLayout = ({ children }) => {
           </p>
         </div>
       </div>
-       <Outlet /> 
+       {/* <Outlet />  */}
     </div>
   );
 };

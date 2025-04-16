@@ -1,23 +1,41 @@
-// src/routes/PublicRoute.jsx
 import React from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 const PublicRoute = () => {
-  const { isAuthenticated, profileStatus } = useSelector((state) => state.auth);
+  const { isAuthenticated, emailVerified, profileStatus } = useSelector((state) => state.auth);
   const location = useLocation();
+  const currentPath = location.pathname;
 
-  // If user is logged in, redirect them based on their profile status
-  if (isAuthenticated) {
-    // Get the intended destination from query params or use default routes
-    const from = location.state?.from?.pathname || 
-      (profileStatus === 'complete' ? '/dashboard' : '/onboarding');
+  // Special case for email verification - don't redirect if user is at verification page
+  if (currentPath === '/auth/verify-email') {
+    // If user is fully authenticated with verified email and complete profile, 
+    // redirect to dashboard (they don't need to verify again)
+    if (isAuthenticated && emailVerified && profileStatus === 'complete') {
+      return <Navigate to="/dashboard" replace />;
+    }
     
-    return <Navigate to={from} replace />;
-    
+    // Otherwise, just show the verification page
+    return <Outlet />;
   }
-  console.log('Authenticated:', isAuthenticated);
-  console.log('Token:', localStorage.getItem('token'));
+
+  // For all other public routes
+  if (isAuthenticated) {
+    // If authenticated but email not verified, redirect to email verification
+    if (!emailVerified) {
+      return <Navigate to="/auth/verify-email" replace />;
+    }
+    
+    // If authenticated and email verified but profile incomplete, redirect to onboarding
+    if (emailVerified && profileStatus === 'incomplete') {
+      return <Navigate to="/onboarding" replace />;
+    }
+    
+    // If authenticated with verified email and complete profile, redirect to dashboard
+    // or the intended destination
+    const from = location.state?.from?.pathname || '/dashboard';
+    return <Navigate to={from} replace />;
+  }
   
   // If not authenticated, render the child routes
   return <Outlet />;

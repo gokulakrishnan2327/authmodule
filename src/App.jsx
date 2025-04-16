@@ -1,4 +1,3 @@
-// src/App.jsx
 import React, { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -14,13 +13,15 @@ import ForgotPassword from './features/auth/pages/ForgotPassword';
 import ResetPassword from './features/auth/pages/ResetPassword';
 import OnboardingPage from './features/auth/pages/OnboardingPage';
 import EmailVerification from './components/EmailVerification';
+import StartRegisterPage from './features/auth/pages/StartRegisterPage';
 
 // Dashboard Pages
 import DashboardPage from './features/dashboard/page/DashboardPage';
 
 // Route Protection Components
 import ProtectedRoute from './routes/ProtectedRoute';
-import  PublicRoute  from './routes/PublicRoute';
+import PublicRoute from './routes/PublicRoute';
+import StartLoginPage from './features/auth/pages/StartLoginPage';
 
 const App = () => {
   const dispatch = useDispatch();
@@ -37,14 +38,17 @@ const App = () => {
     <Routes>
       {/* Public routes */}
       <Route element={<PublicRoute />}>
-        <Route path="/" element={<Navigate to="/auth/login" replace />} />
+        {/* Default route redirects to start registration */}
+        <Route path="/" element={<Navigate to="/auth/register" replace />} />
         
-        <Route >
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/auth/signup" element={<SignupPage />} />
-          <Route path="/auth/forgot-password" element={<ForgotPassword />} />
-          <Route path="/auth/reset-password" element={<ResetPassword />} />
-          <Route path="/auth/verify-email" element={<EmailVerification />} />
+        <Route path="/auth">
+          <Route path="register" element={<StartRegisterPage />} />
+          <Route path="start-login" element={<StartLoginPage />} />
+          <Route path="login" element={<LoginPage />} />
+          <Route path="signup" element={<SignupPage />} />
+          <Route path="forgot-password" element={<ForgotPassword />} />
+          <Route path="reset-password" element={<ResetPassword />} />
+          <Route path="verify-email" element={<EmailVerification />} />
         </Route>
       </Route>
       
@@ -55,7 +59,7 @@ const App = () => {
       </Route>
       
       {/* Fallback route */}
-      <Route path="*" element={<Navigate to="/login" replace />} />
+      <Route path="*" element={<Navigate to="/auth/register" replace />} />
     </Routes>
   );
 };
