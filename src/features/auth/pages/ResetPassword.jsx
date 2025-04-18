@@ -100,19 +100,19 @@ const ResetPassword = () => {
   
   return (
     <AuthLayout>
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="text-center text-3xl font-extrabold text-gray-900">
+      <div className="ml-8 max-w-md">
+        <h2 className="font-roboto font-semibold text-4xl leading-tight tracking-tighter text-left">
           Create new password
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
+        <p className="mt-2 text-left font-roboto font-medium text-lg leading-6 tracking-wide">
           Your new password must be different from previously used passwords.
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      <div className="mt-8 ml-8 max-w-md">
+        <div className="py-8 pr-4 pl-0">
           {loading && (
-            <div className="flex justify-center my-8">
+            <div className="flex justify-start my-8">
               <Loader />
             </div>
           )}
@@ -134,15 +134,15 @@ const ResetPassword = () => {
           
           {/* Success popup */}
           {resetSuccess ? (
-            <div className="text-center py-8">
-              <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100 mb-4">
+            <div className="text-left py-8">
+              <div className="flex items-center justify-start h-16 w-16 rounded-full bg-green-100 mb-4">
                 <svg className="h-8 w-8 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                 </svg>
               </div>
               <h3 className="text-xl font-medium text-gray-900">All set!</h3>
               <p className="mt-2 text-gray-600">Your password's been updated.</p>
-              <div className="mt-6">
+              <div className="mt-6 max-w-md">
                 <Button
                   onClick={handleDone}
                   variant="primary"
@@ -155,7 +155,7 @@ const ResetPassword = () => {
           ) : (
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
-                <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="newPassword" className="block font-roboto font-medium text-base leading-none tracking-wide text-black-700">
                   Password (minimum length 8 characters)
                 </label>
                 <div className="mt-1 relative">
@@ -164,12 +164,10 @@ const ResetPassword = () => {
                     name="newPassword"
                     type={showPassword ? "text" : "password"}
                     autoComplete="new-password"
-                    placeholder="Enter your new password"
+                    placeholder="Enter new password"
                     value={formData.newPassword}
                     onChange={handleChange}
-                    className={`appearance-none block w-full px-3 py-2 border ${
-                      formErrors.newPassword ? 'border-red-300' : 'border-gray-300'
-                    } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+                    className={`appearance-none w-full font-roboto font-medium text-xs leading-none tracking-wide h-14 px-4 py-4  rounded-lg border border-[#94949B] placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500`}
                   />
                   <button
                     type="button"
@@ -195,7 +193,7 @@ const ResetPassword = () => {
               </div>
               
               <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="confirmPassword" className="block font-roboto font-medium text-base leading-none tracking-wide text-black-700">
                   Confirm Password
                 </label>
                 <div className="mt-1 relative">
@@ -204,12 +202,10 @@ const ResetPassword = () => {
                     name="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
                     autoComplete="new-password"
-                    placeholder="Confirm your new password"
+                    placeholder="Confirm new password"
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className={`appearance-none block w-full px-3 py-2 border ${
-                      formErrors.confirmPassword ? 'border-red-300' : 'border-gray-300'
-                    } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+                    className={`appearance-none w-full font-roboto font-medium text-xs leading-none tracking-wide h-14 px-4 py-4  rounded-lg border border-[#94949B] placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500`}
                   />
                   <button
                     type="button"

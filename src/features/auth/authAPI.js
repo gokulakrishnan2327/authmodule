@@ -53,8 +53,10 @@ export const login = async (credentials) => {
   return api.post('/login', credentials);
 };
 
-export const verifyEmail = async (token) => {
-  return api.post('/verify-email', { token });
+export const verifyEmail = async (verificationData) => {
+  // Directly pass the object containing email and code
+  console.log('API call with:', verificationData);
+  return api.post('/verify-email', verificationData);
 };
 
 export const resendVerification = async (email) => {

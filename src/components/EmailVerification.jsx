@@ -84,22 +84,27 @@ const EmailVerification = () => {
     setCountdown(60);
   };
   
-  // Handle manual verification with entered token
-  const handleManualVerification = () => {
-    if (!token.trim()) {
-      setShowExpiredMessage(true);
-      return;
-    }
+ // In EmailVerification.jsx, modify the handleManualVerification function
+const handleManualVerification = () => {
+  if (!token.trim()) {
+    setShowExpiredMessage(true);
+    return;
+  }
+  console.log('Sending verification:', { email, token });
+  // Send both email and code
+  dispatch(verifyEmail({ email, code: token }))
+  
+    .unwrap()
+    .then(() => {
+      navigate('/auth/signup');
+    })
     
-    dispatch(verifyEmail(token))
-      .unwrap()
-      .then(() => {
-        navigate('/auth/signup');
-      })
-      .catch(() => {
-        // Error handling via redux state
-      });
-  };
+    .catch(() => {
+      // Error handling via redux state
+    });
+};
+
+// Then update the verifyEmail thunk and API function to handle the new structure
 
   // Handle email input changes
   const handleEmailChange = (e) => {

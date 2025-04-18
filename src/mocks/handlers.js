@@ -132,9 +132,10 @@ export const handlers = [
   }),
   
   // Verify Email Code (from file 1)
-  rest.post('/api/auth/verify-email-code', (req, res, ctx) => {
+  rest.post('/api/auth/verify-email', (req, res, ctx) => {
     const { email, code } = req.body;
-    
+    console.log("Received verification request:", { email, code }); // Add logging for debugging
+    console.log('Handler received:', req.body);
     if (!verificationCodes.has(email)) {
       return res(
         ctx.status(400),
@@ -238,33 +239,33 @@ export const handlers = [
     );
   }),
   
-  // Email Verification (from file 2)
-  rest.post('/api/auth/verify-email', (req, res, ctx) => {
-    const { token } = req.body;
+  // // Email Verification (from file 2)
+  // rest.post('/api/auth/verify-email', (req, res, ctx) => {
+  //   const { token } = req.body;
     
-    // In a real app, we would validate the token against stored tokens
-    // Here we'll just simulate successful verification
-    if (token && token.startsWith('mock-verify-')) {
-      const userId = token.split('-')[2];
-      const user = users.find(u => u.id === userId);
+  //   // In a real app, we would validate the token against stored tokens
+  //   // Here we'll just simulate successful verification
+  //   if (token && token.startsWith('mock-verify-')) {
+  //     const userId = token.split('-')[2];
+  //     const user = users.find(u => u.id === userId);
       
-      if (user) {
-        user.emailVerified = true;
-        return res(
-          ctx.status(200),
-          ctx.json({
-            message: 'Email verified successfully',
-            emailVerified: true
-          })
-        );
-      }
-    }
+  //     if (user) {
+  //       user.emailVerified = true;
+  //       return res(
+  //         ctx.status(200),
+  //         ctx.json({
+  //           message: 'Email verified successfully',
+  //           emailVerified: true
+  //         })
+  //       );
+  //     }
+  //   }
     
-    return res(
-      ctx.status(400),
-      ctx.json({ error: 'Invalid or expired verification token' })
-    );
-  }),
+  //   return res(
+  //     ctx.status(400),
+  //     ctx.json({ error: 'Invalid or expired verification token' })
+  //   );
+  // }),
   
   // Resend Verification Email (combined from both files)
   rest.post('/api/auth/resend-verification', (req, res, ctx) => {

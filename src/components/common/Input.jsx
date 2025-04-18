@@ -21,30 +21,24 @@ const Input = ({
   const [isFocused, setIsFocused] = useState(false);
   
   // Determine border and focus styling based on state
-  let borderClass = 'border-gray-300 focus:border-primary focus:ring-primary';
+  let borderClass = 'border-[#94949B] focus:border-primary focus:ring-primary';
   if (error) borderClass = 'border-error focus:border-error focus:ring-error';
   if (success) borderClass = 'border-success focus:border-success focus:ring-success';
   
   // Determine padding based on presence of icons
-  let paddingClass = 'px-4 pt-2 pb-2'; // Updated padding to 16px (px-4)
-  if (leadingIcon) paddingClass = 'pl-10 pr-4 pt-2 pb-2';
-  if (trailingIcon || type === 'password') paddingClass = 'pl-4 pr-10 pt-2 pb-2';
-  if (leadingIcon && (trailingIcon || type === 'password')) paddingClass = 'pl-10 pr-10 pt-2 pb-2';
+  let paddingClass = 'px-4 py-2'; // 16px horizontal, 8px vertical padding
+  if (leadingIcon) paddingClass = 'pl-10 pr-4 py-2';
+  if (trailingIcon || type === 'password') paddingClass = 'pl-4 pr-10 py-2';
+  if (leadingIcon && (trailingIcon || type === 'password')) paddingClass = 'pl-10 pr-10 py-2';
   
   // Determine actual input type
   const inputType = type === 'password' ? (showPassword ? 'text' : 'password') : type;
   
-  // Label positioning class - moved up and to the left corner
-  const labelClass = `absolute text-xs transition-all duration-200 text-[#64646D] ${
-    isFocused || value ? 'top-1 left-3' : 'top-1/2 -translate-y-1/2 left-4'
-  } ${leadingIcon ? 'left-10' : ''}`;
-  
   return (
-    <div className={`${className} w-[428px]`}> {/* Decreased width to 468px */}
-      <div className="relative rounded-lg shadow-sm"> {/* Changed to rounded-lg for 10px border-radius */}
+    <div className={`${className} w-full max-w-[460px] md:w-[460px]`}>
+      <div className="relative rounded-lg shadow-sm">
         {leadingIcon && (
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
-            <span className="text-gray-500 sm:text-sm">{leadingIcon}</span>
           </div>
         )}
         
@@ -59,28 +53,25 @@ const Input = ({
             if (onBlur) onBlur(e);
           }}
           onFocus={() => setIsFocused(true)}
-          className={`shadow-sm block w-full sm:text-sm border rounded-lg ${paddingClass} ${borderClass} ${disabled ? 'bg-gray-100 cursor-not-allowed' : ''}`}
-          placeholder={isFocused || value ? placeholder : ''}
+          className={`
+            font-roboto font-medium text-base leading-none tracking-wide
+            block w-full h-12 border border-solid rounded-lg
+            ${paddingClass} ${borderClass} 
+            ${disabled ? 'bg-gray-100 cursor-not-allowed' : ''}
+            focus:outline-none focus:ring-2 focus:ring-opacity-50
+          `}
+          placeholder={placeholder}
           disabled={disabled}
-          style={{ 
-            height: '48px',
-            fontFamily: 'Roboto',
-            fontWeight: 500,
-            fontSize: '15px',
-            lineHeight: '100%',
-            letterSpacing: '1%'
-          }}
         />
         
         {label && (
           <label 
             htmlFor={id} 
-            className={labelClass}
-            style={{ 
-              height: '10px', 
-              maxWidth: '484px', 
-              color: '#64646D' 
-            }}
+            className={`
+              absolute text-sm font-roboto font-medium text-[#64646D]
+              ${isFocused || value ? 'top-1 left-4 text-xs transition-all duration-200' : 'top-1/2 -translate-y-1/2 left-4'}
+              ${leadingIcon ? 'left-10' : ''}
+            `}
           >
             {label} {required && <span className="text-error">*</span>}
           </label>

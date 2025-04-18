@@ -29,12 +29,14 @@ export const signupUser = createAsyncThunk(
 
 export const verifyEmail = createAsyncThunk(
   'auth/verifyEmail',
-  async (token, { rejectWithValue }) => {
+  async (verificationData, { rejectWithValue }) => {
     try {
-      const response = await authAPI.verifyEmail(token);
+      // Pass the entire object to authAPI
+      const response = await authAPI.verifyEmail(verificationData);
+      console.log('In thunk:', verificationData);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data?.message || 'Email verification failed');
+      return rejectWithValue(error.response?.data?.error || 'Email verification failed');
     }
   }
 );

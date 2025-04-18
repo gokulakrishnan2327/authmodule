@@ -282,7 +282,7 @@ const SignupForm = () => {
           error={errors.email}
           required
           disabled
-          className="w-full h-10"
+          className="w-full h-11"
         />
       </div>
       
@@ -352,19 +352,20 @@ const SignupForm = () => {
           </div>
           
           <div className="col-span-2">
-            <Input
-              id="phoneNumber"
-              name="phoneNumber"
-              type="tel"
-              label="Phone Number"
-              value={formData.phoneNumber}
-              onChange={handleChange}
-              error={errors.phoneNumber}
-              required
-              className="w-full h-11"
-              labelVisible={false}
-            />
-          </div>
+  <Input
+    id="phoneNumber"
+    name="phoneNumber"
+    type="tel"
+    label="Phone Number"
+    value={formData.phoneNumber}
+    onChange={handleChange}
+    error={errors.phoneNumber}
+    required
+    className="w-60 max-w-xs h-11"
+    labelVisible={false}
+  />
+</div>
+
         </div>
         
         <div className="mb-5">
