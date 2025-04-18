@@ -1,11 +1,99 @@
-// src/features/auth/components/SignupForm.jsx
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { signupUser, clearError } from '../features/auth/authSlice';
-import Input from './common/Input';
-import Button from './common/Button';
+import Input from '../components/common/Input';
+import Button from '../components/common/Button';
 import { validateForm } from '../utils/validators';
+import AuthLayout from '../layouts/AuthLayout';
+// Password Strength Indicator Component
+const PasswordStrengthIndicator = ({ password }) => {
+  // Don't show anything if password is empty
+  if (!password) return null;
+  
+  const getPasswordStrength = (password) => {
+    if (password.length < 4) return 1; // Weak
+    if (password.length < 7) return 2; // Medium
+    return 3; // Strong
+  };
+
+  const strength = getPasswordStrength(password);
+  
+  // Define colors and active segments based on strength
+  const getColorClass = (strength) => {
+    switch (strength) {
+      case 1: return 'bg-[#E9263A]'; // Weak - red
+      case 2: return 'bg-[#FFC109]'; // Medium - yellow
+      case 3: return 'bg-[#85B205]'; // Strong - green
+      default: return 'bg-[#E8E8E9]'; // Default - light gray
+    }
+  };
+
+  // Define message based on strength
+  const getMessage = (strength) => {
+    switch (strength) {
+      case 0: return { text: 'Too short password', color: 'text-gray-500' };
+      case 1: return { text: 'This is a weak ', color: 'text-[#E9263A]' };
+      case 2: return { text: 'This is just a good ', color: 'text-[#FFC109]' };
+      case 3: return { text: 'Wohoo! It\'s a strong ', color: 'text-[#85B205]' };
+      default: return { text: '', color: '' };
+    }
+  };
+
+  const message = getMessage(strength);
+  
+  // Determine which bars should be active and their colors
+  const getBarStyles = (barIndex) => {
+    // Default style for all bars
+    let baseStyle = "w-[30px] h-[5px] rounded-full ";
+    
+    // Active styles based on strength
+    if (strength === 1 && barIndex < 2) {
+      return baseStyle + "bg-[#E9263A]"; // Weak - first 2 bars red
+    } else if (strength === 2) {
+      if (barIndex < 2) {
+        return baseStyle + "bg-[#E9263A]"; // First 2 bars red
+      } else if (barIndex < 4) {
+        return baseStyle + "bg-[#FFC109]"; // Next 2 bars yellow
+      }
+    } else if (strength === 3) {
+      if (barIndex < 2) {
+        return baseStyle + "bg-[#E9263A]"; // First 2 bars red
+      } else if (barIndex < 4) {
+        return baseStyle + "bg-[#FFC109]"; // Next 2 bars yellow
+      } else if (barIndex < 6) {
+        return baseStyle + "bg-[#85B205]"; // Last 2 bars green
+      }
+    }
+    
+    // Default for inactive bars
+    return baseStyle + "bg-[#94949B]";
+  };
+
+  return (
+    <div className="mt-2">
+      {/* Container for both bars and message in same line */}
+      <div className="flex items-center justify-between">
+        {/* Strength bars */}
+        <div className="flex space-x-1">
+          {[...Array(6)].map((_, index) => (
+            <div key={index} className={getBarStyles(index)}></div>
+          ))}
+        </div>
+        
+        {/* Strength message with info icon */}
+        <div className="flex items-center gap-2">
+          <span className={`font-roboto font-medium text-base leading-6 ${message.color}`}>
+            {message.text}
+          </span>
+          <div className="w-5 h-5 rounded-full border-2 border-[#5D40ED] flex items-center justify-center text-[#5D40ED] text-xs font-bold">
+            i
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 // Success Modal Component
 const SuccessModal = ({ isOpen, onClose }) => {
@@ -13,18 +101,18 @@ const SuccessModal = ({ isOpen, onClose }) => {
   
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-8 rounded-lg shadow-xl max-w-md w-full">
+      <div className="bg-white p-6 rounded-lg shadow-xl max-w-md w-full">
         <div className="text-center">
-          <div className="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-green-100">
-            <svg className="h-8 w-8 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
+            <svg className="h-6 w-6 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h3 className="mt-4 text-xl font-bold text-gray-900">You're All Set!</h3>
-          <p className="mt-2 text-gray-600">
+          <h3 className="mt-3 text-lg font-bold text-gray-900">You're All Set!</h3>
+          <p className="mt-1 text-gray-600">
             Ready to unlock new possibilities?
           </p>
-          <div className="mt-6">
+          <div className="mt-4">
             <Button onClick={onClose} fullWidth>
               Let's Go!
             </Button>
@@ -38,7 +126,7 @@ const SuccessModal = ({ isOpen, onClose }) => {
 const SignupForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { loading, isAuthenticated, profileStatus } = useSelector((state) => state.auth);
+  const { loading, isAuthenticated, profileStatus, error } = useSelector((state) => state.auth);
   
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [formData, setFormData] = useState({
@@ -53,6 +141,8 @@ const SignupForm = () => {
   });
   
   const [errors, setErrors] = useState({});
+  const [subscribeNewsletter, setSubscribeNewsletter] = useState(false);
+
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [agreeToTermsError, setAgreeToTermsError] = useState('');
   
@@ -81,6 +171,19 @@ const SignupForm = () => {
       dispatch(clearError());
     };
   }, [dispatch]);
+
+  // Display error from Redux state
+  useEffect(() => {
+    if (error) {
+      // Map server errors to form fields if possible
+      if (error.includes('email')) {
+        setErrors(prev => ({ ...prev, email: error }));
+      } else if (error.includes('password')) {
+        setErrors(prev => ({ ...prev, password: error }));
+      }
+      // Or you could set a general form error
+    }
+  }, [error]);
   
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -101,7 +204,7 @@ const SignupForm = () => {
   ];
   
   const countryCodes = [
-    { value: '+1', label: '+1 (US/CA)' },
+    { value: '+1', label: '+1 (US)' },
     { value: '+44', label: '+44 (UK)' },
     { value: '+91', label: '+91 (IN)' },
     { value: '+61', label: '+61 (AU)' },
@@ -113,12 +216,6 @@ const SignupForm = () => {
   
   const handleSubmit = (e) => {
     e.preventDefault();
-    
-    // Check terms agreement
-    if (!agreeToTerms) {
-      setAgreeToTermsError('You must agree to the terms and conditions');
-      return;
-    }
     
     // Validate form
     const validationResult = validateForm(formData, [
@@ -135,43 +232,47 @@ const SignupForm = () => {
       return;
     }
     
-    // Remove confirmPassword and prepare data for submission
-    const { confirmPassword, ...signupData } = formData;
+    // Format phone number with country code
+    const formattedPhoneNumber = `${formData.countryCode}${formData.phoneNumber}`;
     
-    // Dispatch signup action and show success modal instead of automatic redirect
+    // Remove confirmPassword and prepare data for submission
+    const { confirmPassword, countryCode, phoneNumber, ...signupData } = formData;
+    signupData.phoneNumber = formattedPhoneNumber;
+    
+    // Add newsletter subscription preference
+    signupData.subscribeNewsletter = subscribeNewsletter;
+    
+    console.log('Submitting signup data:', signupData);
+    
     dispatch(signupUser(signupData))
       .unwrap()
       .then(() => {
         setShowSuccessModal(true);
+        console.log('Signup successful');
       })
       .catch((error) => {
-        // Error handling is managed by Redux
+        console.error('Signup failed:', error);
       });
   };
   
   const handleSuccessModalClose = () => {
     setShowSuccessModal(false);
-    navigate('/auth/start-login'); // Redirect to StartLoginPage instead of dashboard
-  };
-  
-  const handleSocialSignup = (provider) => {
-    // Mock social signup for now
-    console.log(`Initiating ${provider} signup...`);
-    // In a real implementation, you would redirect to the OAuth provider
+    navigate('/auth/start-login'); // Redirect to StartLoginPage
   };
   
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-gray-900">Create your account</h2>
-        <p className="mt-2 text-sm text-gray-600">
-          Already have an account?{' '}
-          <Link to="/login" className="font-medium text-primary hover:text-primary-dark">
-            Sign in
-          </Link>
+    <div className="w-full max-w-lg mx-auto text-left h-[650px]">
+      <div className="mb-6">
+        <h2 className="font-roboto text-2xl font-semibold leading-8 tracking-[-2%] text-left text-gray-900">
+          Create Your Account
+        </h2>
+        <p className="text-sm font-roboto font-medium text-gray-600 text-left leading-5 tracking-[2%]">
+          Create an account to begin accessing our content.
         </p>
       </div>
-      <Input
+
+      <div className="mb-5">
+        <Input
           id="email"
           name="email"
           type="email"
@@ -180,67 +281,76 @@ const SignupForm = () => {
           onChange={handleChange}
           error={errors.email}
           required
-          disabled // Email is pre-filled from verification step
-          leadingIcon={
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
-              <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
-            </svg>
-          }
-        /> 
-      <form className="space-y-6" onSubmit={handleSubmit}>
-        <Input
-          id="fullName"
-          name="fullName"
-          type="text"
-          label="Full Name"
-          value={formData.fullName}
-          onChange={handleChange}
-          error={errors.fullName}
-          required
-          leadingIcon={
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-            </svg>
-          }
+          disabled
+          className="w-full h-10"
         />
-        <Input
-          id="password"
-          name="password"
-          type="password"
-          label="Password"
-          value={formData.password}
-          onChange={handleChange}
-          error={errors.password}
-          required
-          leadingIcon={
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-            </svg>
-          }
-        />
+      </div>
+      
+      <form className="space-y-5 mt-4" onSubmit={handleSubmit}>
+        <div className="mb-5">
+          <Input
+            id="fullName"
+            name="fullName"
+            type="text"
+            label="Full Name"
+            value={formData.fullName}
+            onChange={handleChange}
+            error={errors.fullName}
+            required
+            className="w-full h-10"
+          />
+        </div>
         
+        <div className="mb-3">
+          <Input
+            id="password"
+            name="password"
+            type="password"
+            label="Password"
+            value={formData.password}
+            onChange={handleChange}
+            error={errors.password}
+            required
+            className="w-full h-11"
+            showPassword={false} // Prevent the eye icon from showing
+          />
+          
+          {/* Password Strength Indicator */}
+          <PasswordStrengthIndicator password={formData.password} />
+        </div>
         
-        {/* Phone Number with Country Code */}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="mb-5">
+          <Input
+            id="confirmPassword"
+            name="confirmPassword"
+            type="password"
+            label="Confirm Password"
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            error={errors.confirmPassword}
+            required
+            className="w-full h-11"
+            showPassword={false} // Prevent the eye icon from showing
+          />
+        </div>
+        
+        <div className="grid grid-cols-3 gap-3 mb-10">
           <div className="col-span-1">
-            <label htmlFor="countryCode" className="block text-sm font-medium text-gray-700">
-              Country Code
-            </label>
             <select
               id="countryCode"
               name="countryCode"
-              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md"
+              className="w-full h-11 rounded-md border border-gray-300 py-2 px-3 focus:outline-none focus:ring-[#5E41F1] focus:border-[#5E41F1] text-sm flex items-center"
               value={formData.countryCode}
               onChange={handleChange}
             >
               {countryCodes.map((code) => (
-                <option key={code.value} value={code.value}>
+                <option key={code.value} value={code.value} className="flex items-center">
                   {code.label}
                 </option>
               ))}
             </select>
           </div>
+          
           <div className="col-span-2">
             <Input
               id="phoneNumber"
@@ -251,98 +361,83 @@ const SignupForm = () => {
               onChange={handleChange}
               error={errors.phoneNumber}
               required
-              leadingIcon={
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
-                </svg>
-              }
+              className="w-full h-11"
+              labelVisible={false}
             />
           </div>
         </div>
         
-        {/* Role Selection */}
-        <div>
-          <label htmlFor="role" className="block text-sm font-medium text-gray-700">
-            Select Your Role
-          </label>
+        <div className="mb-5">
           <select
             id="role"
             name="role"
-            className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm rounded-md"
+            className="w-full h-11 pl-3 pr-8 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-[#5E41F1] focus:border-[#5E41F1]"
             value={formData.role}
             onChange={handleChange}
             required
           >
-            <option value="" disabled>Select a role</option>
+            <option value="" disabled>Role</option>
             {roleOptions.map((role) => (
               <option key={role.value} value={role.value}>
                 {role.label}
               </option>
             ))}
           </select>
-          {errors.role && <p className="mt-1 text-sm text-error">{errors.role}</p>}
+          {errors.role && <p className="mt-1 text-xs text-red-600">{errors.role}</p>}
         </div>
         
+        <div className="flex items-start mb-5">
+  <div className="flex items-center h-4">
+    <input
+      id="newsletter"
+      name="newsletter"
+      type="checkbox"
+      className="h-4 w-4 text-[#5D40ED] focus:ring-[#5D40ED] border-2 border-[#5D40ED] rounded"
+      checked={subscribeNewsletter}
+      onChange={() => setSubscribeNewsletter(!subscribeNewsletter)}
+    />
+  </div>
+  <div className="ml-2">
+    <label htmlFor="newsletter" className="font-roboto font-medium text-sm leading-[100%] text-gray-700">
+      Subscribe to our newsletter
+    </label>
+  </div>
+</div>
         
-        
-        
-        
-        
-        
-        <div className="flex items-start">
-          <div className="flex items-center h-5">
-            <input
-              id="terms"
-              name="terms"
-              type="checkbox"
-              className="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"
-              checked={agreeToTerms}
-              onChange={() => {
-                setAgreeToTerms(!agreeToTerms);
-                if (agreeToTermsError) setAgreeToTermsError('');
-              }}
-            />
-          </div>
-          <div className="ml-3 text-sm">
-            <label htmlFor="terms" className="font-medium text-gray-700">
-              I agree to the{' '}
-              <a href="#" className="text-primary hover:text-primary-dark">
-                Terms of Service
-              </a>{' '}
-              and{' '}
-              <a href="#" className="text-primary hover:text-primary-dark">
-                Privacy Policy
-              </a>
-            </label>
-            {agreeToTermsError && (
-              <p className="mt-1 text-sm text-error">{agreeToTermsError}</p>
-            )}
-          </div>
-        </div>
-        
-        <div>
+        <div className="mb-5">
           <Button
             type="submit"
             variant="primary"
             size="large"
             fullWidth
             loading={loading}
+            className="bg-[#5E41F1] hover:bg-[#4933c8] font-sans transition-colors h-10"
           >
-            Create account
+          Register
           </Button>
         </div>
-      </form>
-      
-      <div className="mt-6">
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-300"></div>
-          </div>
-          
+        
+        <p className="text-xs text-gray-600 font-sans text-left mb-3">
+          Already have an account?{' '}
+          <Link to="/auth/start-login" className="font-medium text-[#5E41F1] hover:text-[#4933c8] font-sans">
+            Sign in
+          </Link>
+        </p>
+
+        <div className="mb-4">
+          <p className="font-sans font-medium text-xs leading-4 tracking-wider text-left">
+            By accessing your account, you agree to our{' '}
+            <a href="/terms" className="font-sans font-medium text-xs leading-4 tracking-wider text-[#5E41F1]">
+              Terms and Conditions
+            </a>{' '}
+            and{' '}
+            <a href="/privacy" className="font-sans font-medium text-xs leading-4 tracking-wider text-[#5E41F1]">
+              Privacy Policy
+            </a>
+            .
+          </p>
         </div>
-        
-        
-      </div>
+      </form>
       
       {/* Success Modal */}
       <SuccessModal isOpen={showSuccessModal} onClose={handleSuccessModalClose} />

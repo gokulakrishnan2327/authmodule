@@ -10,7 +10,7 @@ export const loginUser = createAsyncThunk(
       const response = await authAPI.login(credentials);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || { message: 'Login failed' });
+      return rejectWithValue(error.response?.data?.message || 'Login failed');
     }
   }
 );
@@ -22,7 +22,7 @@ export const signupUser = createAsyncThunk(
       const response = await authAPI.signup(userData);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || { message: 'Signup failed' });
+      return rejectWithValue(error.response?.data?.message || 'Signup failed');
     }
   }
 );
@@ -34,7 +34,7 @@ export const verifyEmail = createAsyncThunk(
       const response = await authAPI.verifyEmail(token);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || { message: 'Email verification failed' });
+      return rejectWithValue(error.response?.data?.message || 'Email verification failed');
     }
   }
 );
@@ -46,7 +46,7 @@ export const forgotPassword = createAsyncThunk(
       const response = await authAPI.forgotPassword(email);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || { message: 'Password reset request failed' });
+      return rejectWithValue(error.response?.data?.message || 'Password reset request failed');
     }
   }
 );
@@ -58,7 +58,7 @@ export const resetPassword = createAsyncThunk(
       const response = await authAPI.resetPassword(token, newPassword);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || { message: 'Password reset failed' });
+      return rejectWithValue(error.response?.data?.message || 'Password reset failed');
     }
   }
 );
@@ -71,7 +71,7 @@ export const changePassword = createAsyncThunk(
       const response = await authAPI.changePassword(currentPassword, newPassword, auth.token);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || { message: 'Password change failed' });
+      return rejectWithValue(error.response?.data?.message || 'Password change failed');
     }
   }
 );
@@ -86,7 +86,7 @@ export const logout = createAsyncThunk(
       }
       return null;
     } catch (error) {
-      return rejectWithValue(error.response?.data || { message: 'Logout failed' });
+      return rejectWithValue(error.response?.data?.message || 'Logout failed');
     }
   }
 );
@@ -99,21 +99,27 @@ export const completeOnboarding = createAsyncThunk(
       const response = await authAPI.completeOnboarding(onboardingData, auth.token);
       return response.data;
     } catch (error) {
-      return rejectWithValue(error.response?.data || { message: 'Onboarding failed' });
+      return rejectWithValue(error.response?.data?.message || 'Onboarding failed');
+    }
+  }
+);
+export const updateProfile = async (token, profileData) => {
+  return api.post('/update-profile', { token, profileData });
+};
+
+export const getCurrentUser = createAsyncThunk(
+  'auth/getCurrentUser',
+  async (_, { rejectWithValue, getState }) => {
+    try {
+      const { auth } = getState();
+      const response = await authAPI.getUserProfile(auth.token);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Failed to get user profile');
     }
   }
 );
 
-// Update profile
-export const updateProfile = async (token, profileData) => {
-    return api.post('/update-profile', { token, profileData });
-  };
-  
-  // Get current user
-  export const getCurrentUser = async (token) => {
-    return api.get('/me');
-  }
-//redirect to dashboard directly without login
 const initialState = {
   user: null,
   token: localStorage.getItem('token') || null,
@@ -124,7 +130,6 @@ const initialState = {
   error: null,
   successMessage: null,
 };
-
 
 const authSlice = createSlice({
   name: 'auth',
@@ -160,15 +165,15 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
-        state.profileStatus = action.payload.user.profileStatus || 'incomplete';
-        state.emailVerified = action.payload.user.emailVerified || false;
+        state.profileStatus = action.payload.user?.profileStatus || 'incomplete';
+        state.emailVerified = action.payload.user?.emailVerified || false;
         state.isAuthenticated = true;
         localStorage.setItem('token', action.payload.token);
-        localStorage.setItem('profileStatus', action.payload.user.profileStatus || 'incomplete');
+        localStorage.setItem('profileStatus', action.payload.user?.profileStatus || 'incomplete');
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload?.message || 'Login failed';
+        state.error = action.payload || 'Login failed';
       })
       
       // Signup
@@ -178,18 +183,22 @@ const authSlice = createSlice({
       })
       .addCase(signupUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.user = action.payload.user;
+        // Safely access user data or set defaults
+        state.user = action.payload.user || null;
         state.token = action.payload.token;
+        // Set default profileStatus if not provided by API
         state.profileStatus = 'incomplete';
-        state.emailVerified = false;
+        state.emailVerified = true; // Since we've already verified email in previous step
         state.isAuthenticated = true;
-        state.successMessage = 'Account created successfully! Please verify your email.';
+        state.successMessage = 'Account created successfully!';
         localStorage.setItem('token', action.payload.token);
         localStorage.setItem('profileStatus', 'incomplete');
+        // Clear the signupEmail from localStorage since we don't need it anymore
+        localStorage.removeItem('signupEmail');
       })
       .addCase(signupUser.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload?.message || 'Signup failed';
+        state.error = action.payload || 'Signup failed';
       })
       
       // Email verification
@@ -204,7 +213,29 @@ const authSlice = createSlice({
       })
       .addCase(verifyEmail.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload?.message || 'Email verification failed';
+        state.error = action.payload || 'Email verification failed';
+      })
+      
+      // Get current user
+      .addCase(getCurrentUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(getCurrentUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.profileStatus = action.payload.user?.profileStatus || state.profileStatus;
+        state.emailVerified = action.payload.user?.emailVerified || state.emailVerified;
+      })
+      .addCase(getCurrentUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Failed to get user profile';
+        // If we can't get the user profile, we should log the user out
+        state.token = null;
+        state.user = null;
+        state.isAuthenticated = false;
+        localStorage.removeItem('token');
+        localStorage.removeItem('profileStatus');
       })
       
       // Forgot password
@@ -216,7 +247,7 @@ const authSlice = createSlice({
       .addCase(forgotPassword.fulfilled, (state, action) => {
         state.loading = false;
         state.successMessage = 'Password reset link sent successfully';
-        state.email = action.payload.email; // Store the email
+        state.email = action.payload?.email || ''; // Safely access email or set empty
       })
       .addCase(forgotPassword.rejected, (state, action) => {
         state.loading = false;
@@ -282,11 +313,15 @@ const authSlice = createSlice({
         state.loading = true;
         state.error = null;
       })
-      .addCase(completeOnboarding.fulfilled, (state) => {
+      .addCase(completeOnboarding.fulfilled, (state, action) => {
         state.loading = false;
         state.profileStatus = 'complete';
         state.successMessage = 'Onboarding completed successfully!';
         localStorage.setItem('profileStatus', 'complete');
+         // Update user data if returned from API
+         if (action.payload?.user) {
+          state.user = action.payload.user;
+        }
       })
       .addCase(completeOnboarding.rejected, (state, action) => {
         state.loading = false;

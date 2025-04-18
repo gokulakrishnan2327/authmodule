@@ -1,7 +1,7 @@
 // src/features/auth/authAPI.js
 import axios from 'axios';
 
-// Base API URL (will be replaced with your actual API when ready)
+// Base API URL
 const API_URL = '/api/auth';
 
 // Create axios instance with common configuration
@@ -32,58 +32,82 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
       localStorage.removeItem('profileStatus');
-      // Redirect to login page or dispatch logout action if needed
+      // You could dispatch a logout action here or redirect
+      window.location.href = '/auth/login';
     }
     return Promise.reject(error);
   }
 );
 
 // Auth API methods
-export const signup = (userData) => {
-  return api.post('/signup', userData);
+export const signup = async (userData) => {
+  try {
+    return await api.post('/signup', userData);
+  } catch (error) {
+    console.error('Signup API error:', error);
+    throw error;
+  }
 };
 
-export const login = (credentials) => {
+export const login = async (credentials) => {
   return api.post('/login', credentials);
 };
 
-export const verifyEmail = (token) => {
+export const verifyEmail = async (token) => {
   return api.post('/verify-email', { token });
 };
 
-export const forgotPassword = (email) => {
+export const resendVerification = async (email) => {
+  return api.post('/resend-verification', { email });
+};
+
+export const forgotPassword = async (email) => {
   return api.post('/forgot-password', { email });
 };
 
-export const resetPassword = (token, newPassword) => {
+export const resetPassword = async (token, newPassword) => {
   return api.post('/reset-password', { token, newPassword });
 };
 
-export const changePassword = (currentPassword, newPassword, token) => {
-  return api.put('/change-password', { currentPassword, newPassword }, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
+export const changePassword = async (currentPassword, newPassword) => {
+  return api.put('/change-password', { currentPassword, newPassword });
 };
 
-export const logout = (token) => {
-  return api.post('/logout', {}, {
-    headers: { Authorization: `Bearer ${token}` }
-  });
+export const logout = async () => {
+  return api.post('/logout');
 };
 
-export const completeOnboarding = (onboardingData, token) => {
-  return api.post('/onboarding', onboardingData, {
-    headers: { 
-      Authorization: `Bearer ${token}`,
-      'Content-Type': 'multipart/form-data' // For file uploads
-    }
-  });
+export const completeOnboarding = async (onboardingData) => {
+  try {
+    const formData = new FormData();
+    
+    // Convert onboardingData to FormData for file uploads
+    Object.keys(onboardingData).forEach(key => {
+      if (key === 'profilePhoto' && onboardingData[key] instanceof File) {
+        formData.append(key, onboardingData[key]);
+      } else if (Array.isArray(onboardingData[key])) {
+        onboardingData[key].forEach(value => {
+          formData.append(`${key}[]`, value);
+        });
+      } else {
+        formData.append(key, onboardingData[key]);
+      }
+    });
+    
+    const response = await api.post('/onboarding', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+        // 'Authorization': `Bearer ${token}`
+    });
+    
+    return response.data;
+  } catch (error) {
+    console.error('Onboarding API error:', error);
+    throw error;
+  }
 };
 
-export const getUserProfile = (token) => {
-  return api.get('/profile', {
-    headers: { Authorization: `Bearer ${token}` }
-  });
+export const getUserProfile = async () => {
+  return api.get('/profile');
 };
 
 

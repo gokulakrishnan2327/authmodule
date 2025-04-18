@@ -31,7 +31,7 @@ export const getValidationError = (field, value) => {
       return '';
     case 'password':
       if (!value) return 'Password is required';
-      if (!isPasswordValid(value)) return 'Password must be at least 8 characters with at least one number';
+      if (!isPasswordValid(value)) return 'Password must include at least one uppercase letter, one lowercase letter, one number, and one special character.';
       return '';
     case 'confirmPassword':
       if (!value) return 'Please confirm your password';

@@ -35,17 +35,33 @@ const ForgotPassword = () => {
   
   return (
     <AuthLayout>
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="text-center text-3xl font-extrabold text-gray-900">
-          Forgot your password
+      <div className="w-full max-w-md text-left">
+        <h2 className="text-3xl text-gray-900 font-semibold"
+          style={{
+            fontFamily: 'Roboto, sans-serif',
+            fontSize: '30px',
+            lineHeight: '45px',
+            letterSpacing: '-0.02em',
+            verticalAlign: 'bottom'
+          }}
+        >
+          Forgot your password?
         </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
+        <p className="mt-2 text-gray-600"
+          style={{
+            fontFamily: 'Roboto, sans-serif',
+            fontWeight: 400,
+            fontSize: '15px',
+            lineHeight: '24px',
+            letterSpacing: '0.02em'
+          }}
+        >
           Enter the email address you used when you joined and we'll send you instructions to reset your password.
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+      <div className="mt-8 w-full max-w-md">
+        <div className="bg-white py-8 px-4 shadow sm:rounded-lg">
           {loading && (
             <div className="flex justify-center my-8">
               <Loader />
@@ -75,7 +91,7 @@ const ForgotPassword = () => {
           {!loading && !error && (
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 text-left">
                   Email address
                 </label>
                 <div className="mt-1">
@@ -88,7 +104,7 @@ const ForgotPassword = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                    placeholder="you@example.com"
+                    placeholder="Example@Youremail.com"
                   />
                 </div>
               </div>
@@ -99,14 +115,40 @@ const ForgotPassword = () => {
                   variant="primary"
                   fullWidth
                   disabled={!email.trim() || loading}
+                  className="flex items-center justify-center space-x-2 relative"
                 >
-                  Send reset link
+                 
+                  
+                  <span className="mx-6">Send reset link</span>
+                  
+                  
                 </Button>
               </div>
               
-              <div className="text-center">
-                <Link to="/auth/login" className="font-medium text-indigo-600 hover:text-indigo-500 text-sm">
-                  Back to sign in
+              <div className="text-left">
+                <span
+                  style={{
+                    fontFamily: 'Roboto, sans-serif',
+                    fontWeight: 700,
+                    fontSize: '16px',
+                    lineHeight: '18px',
+                    letterSpacing: '0.03em'
+                  }}
+                >
+                  Back to{' '}
+                </span>
+                <Link 
+                  to="/auth/login" 
+                  className="font-bold text-indigo-600 hover:text-indigo-500"
+                  style={{
+                    fontFamily: 'Roboto, sans-serif',
+                    fontWeight: 700,
+                    fontSize: '16px',
+                    lineHeight: '18px',
+                    letterSpacing: '0.03em'
+                  }}
+                >
+                  Sign in
                 </Link>
               </div>
             </form>

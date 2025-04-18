@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { updateProfile, clearError, clearSuccessMessage } from '../features/auth/authSlice';
+import { clearError, clearSuccessMessage } from '../features/auth/authSlice';
 import Button from './common/Button';
 import Loader from './common/Loader';
 
@@ -12,19 +12,19 @@ import ProfilePhotos from './onboarding/ProfilePhotos';
 import GoalsSelection from './onboarding/GoalsSelection';
 import ContactInfo from './onboarding/ContactInfo';
 
-const OnboardingStepper = () => {
+const OnboardingStepper = ({ onComplete }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   
-  const { loading, error, successMessage, user, profileStatus } = useSelector((state) => state.auth);
+  const { loading, error, successMessage, profileStatus } = useSelector((state) => state.auth);
   
   const [currentStep, setCurrentStep] = useState(1);
   const [formData, setFormData] = useState({
     role: '',
     interests: [],
-    photos: [],
+    profilePhoto: null,
     goals: [],
-    phoneNumber: ''
+    mobileNumber: ''
   });
   
   const totalSteps = 5;
@@ -39,10 +39,14 @@ const OnboardingStepper = () => {
   
   // Redirect if profile is already complete
   useEffect(() => {
-    if (profileStatus === 'complete') {
-      navigate('/dashboard');
+    if (successMessage && !loading && !error) {
+      // Delay navigation slightly to show success message
+      const timer = setTimeout(() => {
+        navigate('/dashboard');
+      }, 1500);
+      return () => clearTimeout(timer);
     }
-  }, [profileStatus, navigate]);
+  }, [successMessage, loading, error, navigate]);
   
   const updateFormData = (field, value) => {
     setFormData(prev => ({
@@ -67,14 +71,19 @@ const OnboardingStepper = () => {
   };
   
   const handleSubmit = () => {
-    // Submit the complete onboarding data
-    dispatch(updateProfile({
-      ...formData,
-      profileStatus: 'complete'
-    }));
+    // Format data according to API expectations
+    const submissionData = {
+      role: formData.role,
+      interests: formData.interests,
+      goals: formData.goals,
+      profilePhoto: formData.profilePhoto,
+      mobileNumber: formData.mobileNumber
+    };
     
-    // Navigate to dashboard after successful submission (handled by API)
-    // The navigation happens in useEffect when profileStatus changes to 'complete'
+    // Call the onComplete function passed from parent
+    if (onComplete) {
+      onComplete(submissionData);
+    }
   };
   
   // Determine if the next button should be disabled
@@ -115,8 +124,8 @@ const OnboardingStepper = () => {
       case 3:
         return (
           <ProfilePhotos
-            photos={formData.photos}
-            onChange={(photos) => updateFormData('photos', photos)}
+            photo={formData.profilePhoto}
+            onChange={(photo) => updateFormData('profilePhoto', photo)}
           />
         );
       case 4:
@@ -129,8 +138,8 @@ const OnboardingStepper = () => {
       case 5:
         return (
           <ContactInfo
-            phoneNumber={formData.phoneNumber}
-            onChange={(phoneNumber) => updateFormData('phoneNumber', phoneNumber)}
+            mobileNumber={formData.mobileNumber}
+            onChange={(number) => updateFormData('mobileNumber', number)}
           />
         );
       default:

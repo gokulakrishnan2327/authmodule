@@ -1,4 +1,3 @@
-// src/components/common/Input.jsx
 import React, { useState } from 'react';
 
 const Input = ({
@@ -19,6 +18,7 @@ const Input = ({
   className = '',
 }) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   
   // Determine border and focus styling based on state
   let borderClass = 'border-gray-300 focus:border-primary focus:ring-primary';
@@ -26,28 +26,24 @@ const Input = ({
   if (success) borderClass = 'border-success focus:border-success focus:ring-success';
   
   // Determine padding based on presence of icons
-  let paddingClass = 'px-3';
-  if (leadingIcon) paddingClass = 'pl-10 pr-3';
-  if (trailingIcon || type === 'password') paddingClass = 'pl-3 pr-10';
-  if (leadingIcon && (trailingIcon || type === 'password')) paddingClass = 'pl-10 pr-10';
+  let paddingClass = 'px-4 pt-2 pb-2'; // Updated padding to 16px (px-4)
+  if (leadingIcon) paddingClass = 'pl-10 pr-4 pt-2 pb-2';
+  if (trailingIcon || type === 'password') paddingClass = 'pl-4 pr-10 pt-2 pb-2';
+  if (leadingIcon && (trailingIcon || type === 'password')) paddingClass = 'pl-10 pr-10 pt-2 pb-2';
   
   // Determine actual input type
   const inputType = type === 'password' ? (showPassword ? 'text' : 'password') : type;
   
+  // Label positioning class - moved up and to the left corner
+  const labelClass = `absolute text-xs transition-all duration-200 text-[#64646D] ${
+    isFocused || value ? 'top-1 left-3' : 'top-1/2 -translate-y-1/2 left-4'
+  } ${leadingIcon ? 'left-10' : ''}`;
+  
   return (
-    <div className={className}>
-      {label && (
-        <label 
-          htmlFor={id} 
-          className="block text-sm font-medium text-gray-700 mb-1"
-        >
-          {label} {required && <span className="text-error">*</span>}
-        </label>
-      )}
-      
-      <div className="relative rounded-md shadow-sm">
+    <div className={`${className} w-[428px]`}> {/* Decreased width to 468px */}
+      <div className="relative rounded-lg shadow-sm"> {/* Changed to rounded-lg for 10px border-radius */}
         {leadingIcon && (
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
             <span className="text-gray-500 sm:text-sm">{leadingIcon}</span>
           </div>
         )}
@@ -58,14 +54,40 @@ const Input = ({
           type={inputType}
           value={value}
           onChange={onChange}
-          onBlur={onBlur}
-          className={`shadow-sm block w-full sm:text-sm rounded-md ${paddingClass} ${borderClass} ${disabled ? 'bg-gray-100 cursor-not-allowed' : ''}`}
-          placeholder={placeholder}
+          onBlur={(e) => {
+            setIsFocused(false);
+            if (onBlur) onBlur(e);
+          }}
+          onFocus={() => setIsFocused(true)}
+          className={`shadow-sm block w-full sm:text-sm border rounded-lg ${paddingClass} ${borderClass} ${disabled ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+          placeholder={isFocused || value ? placeholder : ''}
           disabled={disabled}
+          style={{ 
+            height: '48px',
+            fontFamily: 'Roboto',
+            fontWeight: 500,
+            fontSize: '15px',
+            lineHeight: '100%',
+            letterSpacing: '1%'
+          }}
         />
         
+        {label && (
+          <label 
+            htmlFor={id} 
+            className={labelClass}
+            style={{ 
+              height: '10px', 
+              maxWidth: '484px', 
+              color: '#64646D' 
+            }}
+          >
+            {label} {required && <span className="text-error">*</span>}
+          </label>
+        )}
+        
         {type === 'password' && (
-          <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
+          <div className="absolute inset-y-0 right-0 pr-4 flex items-center">
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
@@ -73,7 +95,6 @@ const Input = ({
             >
               {showPassword ? (
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-// src/components/common/Input.jsx (continued)
                   <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
                   <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
                 </svg>
@@ -88,7 +109,7 @@ const Input = ({
         )}
         
         {trailingIcon && type !== 'password' && (
-          <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+          <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
             <span className="text-gray-500 sm:text-sm">{trailingIcon}</span>
           </div>
         )}

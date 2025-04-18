@@ -14,31 +14,56 @@ const CheckYourMailPage = () => {
   
   return (
     <AuthLayout>
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="text-center text-3xl font-extrabold text-gray-900">
-          Check your mail
-        </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          We've sent a password reset link to your email.
-        </p>
-      </div>
-
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <div className="text-center">
-            {/* Mail Paper Rocket Logo */}
-            <div className="mx-auto flex items-center justify-center h-24 w-24 rounded-full bg-blue-100 mb-6">
-              <svg className="h-16 w-16 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4.5 9.5L12 17l7.5-7.5" />
-              </svg>
-            </div>
+      <div className="w-full max-w-lg">
+        <div className="bg-white py-0 px-4 shadow sm:rounded-lg">
+          {/* Modern Mail Paper Rocket Logo - Centered */}
+          <div className="flex justify-center mb-2">
+            <svg width="194" height="168" viewBox="0 0 294 268" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M147 20L264 134L147 248L30 134L147 20Z" fill="#E3F2FD"/>
+              <path d="M147 40L240 134L147 228L54 134L147 40Z" fill="#90CAF9"/>
+              <path d="M147 60L216 134L147 208L78 134L147 60Z" fill="#42A5F5"/>
+              <path fillRule="evenodd" clipRule="evenodd" d="M147 80C121.042 80 100 101.042 100 127V177.5C100 186.06 106.94 193 115.5 193H178.5C187.06 193 194 186.06 194 177.5V127C194 101.042 172.958 80 147 80ZM147 100L179 134H115L147 100Z" fill="#1976D2"/>
+              <path d="M115 134L147 168L179 134" stroke="white" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M147 80V168" stroke="white" strokeWidth="4" strokeLinecap="round"/>
+              <path d="M100 134H194" stroke="white" strokeWidth="4" strokeLinecap="round"/>
+            </svg>
+          </div>
+          
+          {/* All other elements aligned left */}
+          <div className="text-left">
+            <h3 
+              style={{
+                fontFamily: 'Roboto, sans-serif',
+                fontWeight: 600,
+                fontSize: '30px',
+                lineHeight: '40px',
+                letterSpacing: '-0.02em',
+                verticalAlign: 'bottom',
+                width: '100%',
+                maxWidth: '511px'
+              }}
+              className="text-gray-900"
+            >
+              Check your mail
+            </h3>
             
-            <h3 className="mt-3 text-lg font-medium text-gray-900">Check your inbox</h3>
-            <p className="mt-2 text-sm text-gray-500">
-              We've sent a password reset link to{' '}
-              <span className="font-medium text-gray-800">{email}</span>.
-              <br />Please check your inbox and follow the instructions.
+            <p 
+              style={{
+                fontFamily: 'Roboto, sans-serif',
+                fontWeight: 500,
+                fontSize: '18px',
+                lineHeight: '24px',
+                letterSpacing: '0.02em',
+               
+                padding: '12px',
+                borderRadius: '4px',
+                marginTop: '16px',
+                width: '100%',
+                maxWidth: '511px'
+              }}
+            >
+              We have sent a password recover Instructions to your email.{' '}
+              <span className="font-medium">{email}</span>
             </p>
             
             <div className="mt-6">
@@ -48,20 +73,59 @@ const CheckYourMailPage = () => {
             </div>
             
             <div className="mt-6 pt-4 border-t border-gray-200">
-              <p className="text-sm text-gray-500">
-                Did not receive the email?
-              </p>
-              <p className="mt-1 text-sm text-gray-500">
-                Check your spam filter, or{' '}
-                <Link to="/auth/forgot-password" className="font-medium text-indigo-600 hover:text-indigo-500">
+              <p 
+                style={{
+                  fontFamily: 'Roboto, sans-serif',
+                  fontWeight: 500,
+                  fontSize: '18px',
+                  lineHeight: '24px',
+                  letterSpacing: '0.02em',
+                  width: '100%',
+                  maxWidth: '511px'
+                }}
+              >
+                Did not receive the email? Check your spam filter, or{' '}
+                <Link 
+                  to="/auth/forgot-password" 
+                  className="font-medium text-indigo-600 hover:text-indigo-500"
+                  style={{
+                    fontFamily: 'Roboto, sans-serif',
+                    fontWeight: 500,
+                    fontSize: '18px',
+                    lineHeight: '24px',
+                    letterSpacing: '0.02em'
+                  }}
+                >
                   try another email address
                 </Link>
               </p>
             </div>
             
-            <div className="mt-6">
-              <Link to="/auth/login" className="font-medium text-indigo-600 hover:text-indigo-500 text-sm">
-                Back to sign in
+            <div 
+              className="mt-6"
+              style={{
+                fontFamily: 'Roboto, sans-serif',
+                fontWeight: 500,
+                fontSize: '18px',
+                lineHeight: '24px',
+                letterSpacing: '0.02em',
+                width: '100%',
+                maxWidth: '511px'
+              }}
+            >
+              Back to{' '}
+              <Link 
+                to="/auth/login" 
+                className="font-medium text-indigo-600 hover:text-indigo-500"
+                style={{
+                  fontFamily: 'Roboto, sans-serif',
+                  fontWeight: 500,
+                  fontSize: '18px',
+                  lineHeight: '24px',
+                  letterSpacing: '0.02em'
+                }}
+              >
+                sign in
               </Link>
             </div>
           </div>

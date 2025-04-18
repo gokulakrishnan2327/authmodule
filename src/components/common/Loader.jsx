@@ -1,44 +1,29 @@
-// src/components/common/Loader.jsx
 import React from 'react';
 
-const Loader = ({ size = 'medium', color = 'primary', className = '' }) => {
-  // Size classes
-  const sizeClasses = {
-    small: 'h-4 w-4',
-    medium: 'h-8 w-8',
-    large: 'h-12 w-12',
-  };
-  
-  // Color classes
-  const colorClasses = {
-    primary: 'text-primary',
-    secondary: 'text-secondary',
-    white: 'text-white',
-    gray: 'text-gray-500',
-  };
-  
+const Loader = ({ isVisible }) => {
+  if (!isVisible) return null;
+
   return (
-    <div className={`flex justify-center items-center ${className}`}>
-      <svg 
-        className={`animate-spin ${sizeClasses[size]} ${colorClasses[color]}`} 
-        xmlns="http://www.w3.org/2000/svg" 
-        fill="none" 
-        viewBox="0 0 24 24"
-      >
-        <circle 
-          className="opacity-25" 
-          cx="12" 
-          cy="12" 
-          r="10" 
-          stroke="currentColor" 
-          strokeWidth="4"
-        ></circle>
-        <path 
-          className="opacity-75" 
-          fill="currentColor" 
-          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-        ></path>
-      </svg>
+    <div className="fixed flex flex-col items-center justify-center w-[510px] h-[210px] top-[447px] left-[465px] bg-[#2D3436] rounded-lg z-50 transition-opacity duration-300 opacity-100 shadow-xl">
+      <div className="flex flex-col items-center gap-10">
+        {/* Loader animation */}
+        <div className="relative w-[90px] h-[90px] flex items-center justify-center bg-[#5D40ED] rounded-full">
+          <div className="flex space-x-3">
+            {/* Three pulsing dots */}
+            <div className="w-[45px] h-[45px] bg-[#EFECFD] rounded-full animate-pulse"></div>
+          </div>
+        </div>
+        
+        {/* Text content */}
+        <div className="flex flex-col items-center">
+          <h4 className="font-['Roboto'] font-semibold text-4xl leading-[48px] tracking-[-0.02em] text-center text-white">
+            Thanks for the patience
+          </h4>
+          <p className="font-['Roboto'] font-medium text-xl leading-6 tracking-[0.02em] text-center text-white mt-2">
+            Amazing things coming from Pitchmatter
+          </p>
+        </div>
+      </div>
     </div>
   );
 };

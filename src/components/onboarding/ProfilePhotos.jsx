@@ -1,6 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
-const ProfilePhotos = ({ photos, onChange }) => {
+const ProfilePhotos = ({ photo, onChange }) => {
+  // Internal state for managing multiple photos
+  const [photos, setPhotos] = useState([]);
   const [dragOver, setDragOver] = useState(false);
   const fileInputRef = useRef(null);
   
@@ -9,6 +11,26 @@ const ProfilePhotos = ({ photos, onChange }) => {
   const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
   
   const [errors, setErrors] = useState([]);
+  
+  // Initialize photos array if a single photo is passed
+  useEffect(() => {
+    if (photo && !Array.isArray(photo)) {
+      // If we get a single File object, convert to our internal format
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setPhotos([{
+          id: `photo-${Date.now()}-0`,
+          url: e.target.result,
+          name: photo.name,
+          file: photo
+        }]);
+      };
+      reader.readAsDataURL(photo);
+    } else if (Array.isArray(photos) && photos.length === 0 && Array.isArray(photo) && photo.length > 0) {
+      // If photos array is passed directly
+      setPhotos(photo);
+    }
+  }, [photo]);
   
   const handleDragOver = (e) => {
     e.preventDefault();
@@ -48,14 +70,19 @@ const ProfilePhotos = ({ photos, onChange }) => {
       // Read file and create preview URL
       const reader = new FileReader();
       reader.onload = (e) => {
-        // In a real app, you'd upload the file to a server
-        // Here we just store the data URL for preview
-        newPhotos.push({
+        const newPhoto = {
           id: `photo-${Date.now()}-${newPhotos.length}`,
           url: e.target.result,
-          name: file.name
-        });
-        onChange(newPhotos);
+          name: file.name,
+          file: file
+        };
+        
+        const updatedPhotos = [...newPhotos, newPhoto];
+        setPhotos(updatedPhotos);
+        
+        // Send only the first file to parent component
+        // This aligns with the expected single photo in the parent
+        onChange(updatedPhotos[0].file);
       };
       reader.readAsDataURL(file);
     });
@@ -77,15 +104,23 @@ const ProfilePhotos = ({ photos, onChange }) => {
   
   const handleRemovePhoto = (photoId) => {
     const updatedPhotos = photos.filter(photo => photo.id !== photoId);
-    onChange(updatedPhotos);
+    setPhotos(updatedPhotos);
+    
+    // If all photos are removed, send null to parent
+    if (updatedPhotos.length === 0) {
+      onChange(null);
+    } else {
+      // Otherwise send the first photo
+      onChange(updatedPhotos[0].file);
+    }
   };
   
   return (
     <div>
-      <h3 className="text-lg font-medium mb-4">Upload Profile Photos</h3>
+      <h3 className="text-lg font-medium mb-4">Upload Profile Photo</h3>
       <p className="text-gray-600 mb-6">
-        Upload up to {MAX_PHOTOS} profile photos. This helps build trust with other users on the platform.
-        Photos are optional but recommended.
+        Upload a profile photo. This helps build trust with other users on the platform.
+        A photo is optional but recommended.
       </p>
       
       {/* Error messages */}
@@ -114,7 +149,7 @@ const ProfilePhotos = ({ photos, onChange }) => {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
         </svg>
         <p className="mt-2 text-sm text-gray-600">
-          Drag and drop images here, or click to browse
+          Drag and drop image here, or click to browse
         </p>
         <p className="mt-1 text-xs text-gray-500">
           JPEG, PNG, GIF up to 5MB
@@ -124,13 +159,12 @@ const ProfilePhotos = ({ photos, onChange }) => {
           type="file"
           accept="image/jpeg,image/png,image/gif"
           className="hidden"
-          multiple
           onChange={handleFileInputChange}
         />
       </div>
       
       {/* Preview area */}
-      {photos.length > 0 && (
+      {photos && photos.length > 0 && (
         <div className="grid grid-cols-3 gap-4">
           {photos.map(photo => (
             <div key={photo.id} className="relative">
@@ -151,8 +185,8 @@ const ProfilePhotos = ({ photos, onChange }) => {
             </div>
           ))}
           
-          {/* Empty slots */}
-          {Array.from({ length: MAX_PHOTOS - photos.length }).map((_, index) => (
+          {/* Empty slots - only show if less than MAX_PHOTOS */}
+          {photos && Array.from({ length: MAX_PHOTOS - photos.length }).map((_, index) => (
             <div 
               key={`empty-${index}`} 
               className="border border-dashed border-gray-300 rounded-lg h-32 flex items-center justify-center"
