@@ -14,6 +14,68 @@ export const loginUser = createAsyncThunk(
     }
   }
 );
+export const loginWithGoogle = createAsyncThunk(
+  'auth/loginWithGoogle',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await authAPI.loginWithGoogle();
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Google login failed');
+    }
+  }
+);
+
+export const loginWithApple = createAsyncThunk(
+  'auth/loginWithApple',
+  async (_, { rejectWithValue }) => {
+    try {
+      // Implement Apple OAuth login logic
+      // For now, let's simulate with a placeholder
+      const response = await new Promise((resolve) => {
+        setTimeout(() => {
+          resolve({
+            data: {
+              token: 'mock-apple-token',
+              user: {
+                id: 'apple-user-123',
+                fullName: 'Apple User',
+                email: 'apple-user@example.com',
+                profileStatus: 'incomplete',
+                emailVerified: true
+              }
+            }
+          });
+        }, 1000);
+      });
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'Apple login failed');
+    }
+  }
+);
+
+export const loginWithLinkedIn = createAsyncThunk(
+  'auth/loginWithLinkedIn',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await authAPI.loginWithLinkedIn();
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response?.data?.message || 'LinkedIn login failed');
+    }
+  }
+);
+export const handleLoginSuccess = (state, action) => {
+  state.loading = false;
+  state.user = action.payload.user;
+  state.token = action.payload.token;
+  state.profileStatus = action.payload.user?.profileStatus || 'incomplete';
+  state.emailVerified = action.payload.user?.emailVerified || false;
+  state.isAuthenticated = true;
+  localStorage.setItem('token', action.payload.token);
+  localStorage.setItem('profileStatus', action.payload.user?.profileStatus || 'incomplete');
+};
 
 export const signupUser = createAsyncThunk(
   'auth/signupUser',
@@ -155,6 +217,16 @@ const authSlice = createSlice({
     setEmailVerified: (state, action) => {
       state.emailVerified = action.payload;
     },
+    setCredentials: (state, action) => {
+      const { user, token, profileStatus, emailVerified } = action.payload;
+      state.user = user;
+      state.token = token;
+      state.profileStatus = profileStatus || 'incomplete';
+      state.emailVerified = emailVerified || false;
+      state.isAuthenticated = true;
+      localStorage.setItem('token', token);
+      localStorage.setItem('profileStatus', profileStatus || 'incomplete');
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -176,6 +248,60 @@ const authSlice = createSlice({
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload || 'Login failed';
+      })
+      .addCase(loginWithGoogle.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+        state.profileStatus = action.payload.user?.profileStatus || 'incomplete';
+        state.emailVerified = action.payload.user?.emailVerified || false;
+        state.isAuthenticated = true;
+        localStorage.setItem('token', action.payload.token);
+        localStorage.setItem('profileStatus', action.payload.user?.profileStatus || 'incomplete');
+      })
+      .addCase(loginWithGoogle.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Google login failed';
+      })
+      
+      // Apple login
+      .addCase(loginWithApple.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(loginWithApple.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+        state.profileStatus = action.payload.user?.profileStatus || 'incomplete';
+        state.emailVerified = action.payload.user?.emailVerified || false;
+        state.isAuthenticated = true;
+        localStorage.setItem('token', action.payload.token);
+        localStorage.setItem('profileStatus', action.payload.user?.profileStatus || 'incomplete');
+      })
+      .addCase(loginWithApple.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'Apple login failed';
+      })
+      
+      // LinkedIn login
+      .addCase(loginWithLinkedIn.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(loginWithLinkedIn.fulfilled, (state, action) => {
+        state.loading = false;
+        state.user = action.payload.user;
+        state.token = action.payload.token;
+        state.profileStatus = action.payload.user?.profileStatus || 'incomplete';
+        state.emailVerified = action.payload.user?.emailVerified || false;
+        state.isAuthenticated = true;
+        localStorage.setItem('token', action.payload.token);
+        localStorage.setItem('profileStatus', action.payload.user?.profileStatus || 'incomplete');
+      })
+      .addCase(loginWithLinkedIn.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload || 'LinkedIn login failed';
       })
       
       // Signup
@@ -310,6 +436,7 @@ const authSlice = createSlice({
         localStorage.removeItem('profileStatus');
       })
       
+
       // Complete onboarding
       .addCase(completeOnboarding.pending, (state) => {
         state.loading = true;
@@ -332,6 +459,15 @@ const authSlice = createSlice({
   },
 });
 
-export const { clearError, clearSuccessMessage, setToken, setProfileStatus, setEmailVerified } = authSlice.actions;
+export const { clearError, clearSuccessMessage, setToken, setCredentials,setProfileStatus, setEmailVerified } = authSlice.actions;
 
 export default authSlice.reducer;
+
+// Selectors
+export const selectCurrentUser = (state) => state.auth.user;
+export const selectToken = (state) => state.auth.token;
+export const selectIsAuthenticated = (state) => state.auth.isAuthenticated;
+export const selectProfileStatus = (state) => state.auth.profileStatus;
+export const selectEmailVerified = (state) => state.auth.emailVerified;
+export const selectAuthLoading = (state) => state.auth.loading;
+export const selectAuthError = (state) => state.auth.error;

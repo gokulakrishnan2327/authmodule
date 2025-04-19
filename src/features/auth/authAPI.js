@@ -39,6 +39,28 @@ api.interceptors.response.use(
   }
 );
 
+// OAuth configuration
+const oauthConfig = {
+  google: {
+    clientId: import.meta.env.VITE_GOOGLE_CLIENT_ID || '',
+    redirectUri: `${window.location.origin}/auth/google/callback`,
+    scope: 'profile email',
+    responseType: 'code',
+  },
+  apple: {
+    clientId: import.meta.env.VITE_APPLE_CLIENT_ID || '',
+    redirectUri: `${window.location.origin}/auth/apple/callback`,
+    scope: 'name email',
+    responseMode: 'form_post',
+    responseType: 'code id_token',
+  },
+  linkedin: {
+    clientId: import.meta.env.VITE_LINKEDIN_CLIENT_ID || '',
+    redirectUri: `${window.location.origin}/auth/linkedin/callback`,
+    scope: 'r_liteprofile r_emailaddress',
+    responseType: 'code',
+  }
+};
 // Auth API methods
 export const signup = async (userData) => {
   try {
@@ -98,7 +120,6 @@ export const completeOnboarding = async (onboardingData) => {
     
     const response = await api.post('/onboarding', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
-        // 'Authorization': `Bearer ${token}`
     });
     
     return response.data;
@@ -112,28 +133,101 @@ export const getUserProfile = async () => {
   return api.get('/profile');
 };
 
+// OAuth helper functions
+const generateRandomString = (length) => {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+};
 
+const generateAuthUrl = (provider) => {
+  const config = oauthConfig[provider];
+  if (!config) throw new Error(`Unsupported provider: ${provider}`);
+
+  const params = new URLSearchParams({
+    client_id: config.clientId,
+    redirect_uri: config.redirectUri,
+    scope: config.scope,
+    response_type: config.responseType,
+    state: generateRandomString(16),
+  });
+
+  // Store state in localStorage to verify when the user returns
+  localStorage.setItem(`${provider}_oauth_state`, params.get('state'));
+
+  // Provider-specific URLs
+  const baseUrls = {
+    google: 'https://accounts.google.com/o/oauth2/v2/auth',
+    apple: 'https://appleid.apple.com/auth/authorize',
+    linkedin: 'https://www.linkedin.com/oauth/v2/authorization',
+  };
+
+  // Add provider-specific params
+  if (provider === 'apple' && config.responseMode) {
+    params.append('response_mode', config.responseMode);
+  }
+
+  return `${baseUrls[provider]}?${params.toString()}`;
+};
+
+// OAuth methods
 const authAPI = {
-    // Sign up with email
-    signup: async (userData) => {
-      const response = await api.post('/signup', userData);
-      return response.data;
-    },
+  // Common API methods
+  signup: async (userData) => {
+    const response = await api.post('/signup', userData);
+    return response.data;
+  },
   
-    // Login with email and password
-    login: async (credentials) => {
-      const response = await api.post('/login', credentials);
-      return response.data;
-    },
+  login: async (credentials) => {
+    const response = await api.post('/login', credentials);
+    return response.data;
+  },
   
-    // Mock Google OAuth login
-    loginWithGoogle: async () => {
-      // In a real app, this would redirect to Google OAuth
-      // Here we'll simulate a successful social login
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
+  // OAuth initiation methods
+  initiateGoogleAuth: () => {
+    const authUrl = generateAuthUrl('google');
+    window.location.href = authUrl;
+  },
+  
+  initiateAppleAuth: () => {
+    const authUrl = generateAuthUrl('apple');
+    window.location.href = authUrl;
+  },
+  
+  initiateLinkedInAuth: () => {
+    const authUrl = generateAuthUrl('linkedin');
+    window.location.href = authUrl;
+  },
+  
+  // OAuth callback handling methods
+  handleOAuthCallback: async (provider, code, state) => {
+    // Verify state to prevent CSRF attacks
+    const savedState = localStorage.getItem(`${provider}_oauth_state`);
+    if (state !== savedState) {
+      throw new Error('OAuth state mismatch. Possible CSRF attack.');
+    }
+    
+    // Clear the state from localStorage
+    localStorage.removeItem(`${provider}_oauth_state`);
+    
+    // Exchange code for token
+    const response = await api.post(`/oauth/${provider}/callback`, { code });
+    return response.data;
+  },
+  
+  // For development/testing without backend
+  // These methods simulate the OAuth flow
+  loginWithGoogle: async () => {
+    if (import.meta.env.MODE === 'development' && import.meta.env.VITE_MOCK_OAUTH === 'true') {
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
       return {
-        token: 'mock-google-token',
+        token: 'mock-google-token-' + Date.now(),
         user: {
           id: 'google-user-123',
           fullName: 'Google User',
@@ -142,16 +236,44 @@ const authAPI = {
           emailVerified: true
         }
       };
-    },
+    } else {
+      // In production, initiate the real OAuth flow
+      authAPI.initiateGoogleAuth();
+      // This return won't be used since we're redirecting
+      return { redirecting: true };
+    }
+  },
   
-    // Mock LinkedIn OAuth login
-    loginWithLinkedIn: async () => {
-      // In a real app, this would redirect to LinkedIn OAuth
-      // Here we'll simulate a successful social login
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
+  loginWithApple: async () => {
+    if (import.meta.env.MODE === 'development' && import.meta.env.VITE_MOCK_OAUTH === 'true') {
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
       return {
-        token: 'mock-linkedin-token',
+        token: 'mock-apple-token-' + Date.now(),
+        user: {
+          id: 'apple-user-123',
+          fullName: 'Apple User',
+          email: 'apple-user@example.com',
+          profileStatus: 'incomplete',
+          emailVerified: true
+        }
+      };
+    } else {
+      // In production, initiate the real OAuth flow
+      authAPI.initiateAppleAuth();
+      // This return won't be used since we're redirecting
+      return { redirecting: true };
+    }
+  },
+  
+  loginWithLinkedIn: async () => {
+    if (import.meta.env.MODE === 'development' && import.meta.env.VITE_MOCK_OAUTH === 'true') {
+      // Simulate network delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      return {
+        token: 'mock-linkedin-token-' + Date.now(),
         user: {
           id: 'linkedin-user-123',
           fullName: 'LinkedIn User',
@@ -160,58 +282,67 @@ const authAPI = {
           emailVerified: true
         }
       };
-    },
-  
-    // Verify email with token
-    verifyEmail: async (token) => {
-      const response = await api.post('/verify-email', { token });
-      return response.data;
-    },
-  
-    // Resend verification email
-    resendVerificationEmail: async (email) => {
-      const response = await api.post('/resend-verification', { email });
-      return response.data;
-    },
-  
-    // Forgot password - request reset link
-    forgotPassword: async (email) => {
-      const response = await api.post('/forgot-password', { email });
-      return response.data;
-    },
-  
-    // Reset password with token
-    resetPassword: async (token, password) => {
-      const response = await api.post('/reset-password', { token, password });
-      return response.data;
-    },
-  
-    // Change password (for logged in users)
-    changePassword: async (token, currentPassword, newPassword) => {
-      const response = await api.post('/change-password', {
-        currentPassword,
-        newPassword
-      });
-      return response.data;
-    },
-  
-    // Update user profile during onboarding
-    updateProfile: async (token, profileData) => {
-      const response = await api.post('/onboarding', profileData);
-      return response.data;
-    },
-  
-    // Logout user
-    logout: async (token) => {
-      const response = await api.post('/logout');
-      return response.data;
-    },
-  
-    // Check authentication status
-    checkAuthStatus: async (token) => {
-      const response = await api.get('/status');
-      return response.data;
+    } else {
+      // In production, initiate the real OAuth flow
+      authAPI.initiateLinkedInAuth();
+      // This return won't be used since we're redirecting
+      return { redirecting: true };
     }
-  };
+  },
   
-  export default authAPI;
+  // Verify email with token
+  verifyEmail: async (token) => {
+    const response = await api.post('/verify-email', { token });
+    return response.data;
+  },
+  
+  // Resend verification email
+  resendVerificationEmail: async (email) => {
+    const response = await api.post('/resend-verification', { email });
+    return response.data;
+  },
+  
+  // Forgot password - request reset link
+  forgotPassword: async (email) => {
+    const response = await api.post('/forgot-password', { email });
+    return response.data;
+  },
+  
+  // Reset password with token
+  resetPassword: async (token, password) => {
+    const response = await api.post('/reset-password', { token, password });
+    return response.data;
+  },
+  
+  // Change password (for logged in users)
+  changePassword: async (currentPassword, newPassword) => {
+    const response = await api.post('/change-password', {
+      currentPassword,
+      newPassword
+    });
+    return response.data;
+  },
+  
+  // Update user profile during onboarding
+  updateProfile: async (profileData) => {
+    const response = await api.post('/onboarding', profileData);
+    return response.data;
+  },
+  
+  // Logout user
+  logout: async () => {
+    const response = await api.post('/logout');
+    // Clear localStorage regardless of API response
+    localStorage.removeItem('token');
+    localStorage.removeItem('profileStatus');
+    return response.data;
+  },
+  
+  // Check authentication status
+  checkAuthStatus: async () => {
+    const response = await api.get('/status');
+    return response.data;
+  }
+};
+
+export default authAPI;

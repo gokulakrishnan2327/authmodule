@@ -15,6 +15,7 @@ import ResetPassword from './features/auth/pages/ResetPassword';
 import OnboardingPage from './features/auth/pages/OnboardingPage';
 import EmailVerification from './components/EmailVerification';
 import StartRegisterPage from './features/auth/pages/StartRegisterPage';
+import OAuthCallback from './features/auth/OAuthCallback';
 
 // Dashboard Pages
 import DashboardPage from './features/dashboard/page/DashboardPage';
@@ -51,6 +52,8 @@ const App = () => {
           <Route path="check-mail" element={<CheckYourMailPage />} />
           <Route path="reset-password" element={<ResetPassword />} />
           <Route path="verify-email" element={<EmailVerification />} />
+          <Route path="/auth/:provider/callback" element={<OAuthCallback />} />
+
         </Route>
       </Route>
       
