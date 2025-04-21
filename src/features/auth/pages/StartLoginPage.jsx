@@ -41,18 +41,18 @@ const StartLoginPage = () => {
 
   return (
     <AuthLayout>
-      <div className="w-full max-w-lg mx-auto text-left" style={{ height: "490px" }}>
-        <div className="mb-4 h-16">
-          <h1 className="font-sans text-3xl font-bold leading-tight tracking-tight text-left text-gray-900">
+      <div className="w-full max-w-lg mx-auto text-left" style={{ height: "450px" }}>
+        <div className="mb-3 h-14">
+          <h1 className="font-roboto text-3xl font-semibold leading-tight tracking-tighter text-left text-[#2D3436]">
             Welcome!
           </h1>
-          <p className="text-gray-600 mt-1 font-sans text-left text-sm">
+          <p className="text-[#454551] mt-0.5 font-roboto text-left text-lg font-medium tracking-wide">
             Please log in to access your account
           </p>
         </div>
 
-        <div className="mb-4 h-28 space-y-4">
-          <p className="font-sans font-medium text-left text-gray-800">
+        <div className="mb-3 h-24 space-y-3">
+          <p className="font-roboto font-medium text-left text-gray-800">
             Sign in with
           </p>
 
@@ -60,24 +60,24 @@ const StartLoginPage = () => {
           <OAuthButtons mode="login" />
         </div>
         
-        <div className="relative my-4">
+        <div className="relative my-3">
           <div className="absolute inset-0 flex items-center">
             <div className="w-full border-t border-gray-300"></div>
           </div>
-          <div className="relative flex justify-center text-xs">
-            <span className="px-2 bg-white text-gray-500 font-sans">
+          <div className="relative flex justify-center text-s">
+            <span className="px-2 bg-white text-[#454551] font-roboto font-medium text-lg tracking-wide">
               Or enter your email to continue
             </span>
           </div>
         </div>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3">
           <div>
             <Input
               id="email"
               name="email"
               type="email"
-              label="Email Address"
+              placeholder="Email Address"
               value={email}
               onChange={handleEmailChange}
               error={emailError}
@@ -91,30 +91,30 @@ const StartLoginPage = () => {
             size="large"
             fullWidth
             loading={loading}
-            className="bg-[#5E41F1] hover:bg-[#4933c8] font-sans transition-colors h-14"
+            className="bg-[#5E41F1] hover:bg-[#4933c8] font-roboto transition-colors h-12"
           >
             Continue
           </Button>
         </form>
         
-        <div className="mt-4">
-          <p className="font-sans font-medium text-xs leading-5 tracking-wider text-left">
+        <div className="mt-3 w-full max-w-[510px] mx-auto">
+          <p className="font-roboto font-medium text-sm leading-5 tracking-wide text-left">
             By accessing your account, you agree to our{' '}
-            <a href="/terms" className="font-sans font-medium text-xs leading-5 tracking-wider text-[#5E41F1]">
+            <a href="/terms" className="font-medium text-sm leading-5 text-indigo-500 hover:underline">
               Terms and Conditions
             </a>{' '}
             and{' '}
-            <a href="/privacy" className="font-sans font-medium text-xs leading-5 tracking-wider text-[#5E41F1]">
+            <a href="/privacy" className="font-medium text-sm leading-5 text-indigo-500 hover:underline">
               Privacy Policy
             </a>.
           </p>
         </div>
         
-        <div className="mt-4 w-60 h-5 text-left">
-          <p className="font-sans text-sm leading-5 tracking-wider text-gray-600">
+        <div className="mt-3 text-left">
+          <p className="font-roboto text-base tracking-wider text-[#64646D]">
             Don't have an account?{' '}
-            <a href="/auth/register" className="text-[#5E41F1] font-sans font-bold inline-block">
-              Sign up
+            <a href="/auth/register" className="text-[#5D40ED] font-roboto font-bold tracking-wider inline-block">
+              Register
             </a>
           </p>
         </div>

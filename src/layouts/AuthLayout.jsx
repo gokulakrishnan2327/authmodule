@@ -70,8 +70,8 @@ const AuthLayout = ({ children }) => {
   }, [location.pathname]);
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-50 py-6 px-4 sm:px-6">
-      <div className="w-full max-w-7xl flex flex-col lg:flex-row rounded-3xl shadow-xl overflow-hidden">
+    <div className="flex justify-center items-center min-h-screen bg-gray-50 py-6">
+      <div className="w-full max-w-7xl flex flex-col lg:flex-row  overflow-hidden">
         <motion.div 
           className="hidden lg:block lg:w-1/2 relative"
           initial="hidden"
@@ -79,41 +79,56 @@ const AuthLayout = ({ children }) => {
           variants={illustrationVariants}
         >
           <div 
-            className="rounded-3xl overflow-hidden mx-5 my-5 lg:ml-5 lg:mr-10"
+            className="rounded-3xl overflow-hidden"
             style={{
               position: 'relative',
+              width: '530px', 
               height: '580px',
+              top: '0',
+              left: '0',
+              margin: '20px 40px 20px 20px'
             }}
           >
             <img 
               src={getIllustrationPath()} 
               alt="Authentication illustration" 
-              className="w-full h-full object-cover rounded-3xl"
+              className="w-full h-full object-cover"
+              style={{ 
+                borderRadius: '40px',
+              }}
             />
           </div>
         </motion.div>
-        <div className="w-full lg:w-1/2 p-4 sm:p-6 md:p-8 lg:p-12 flex flex-col items-center lg:items-start">
-          <motion.h1 
-            className="text-2xl sm:text-3xl font-bold mb-6 lg:mb-12 lg:-ml-10"
-            style={{
-              backgroundImage: 'linear-gradient(70.78deg, #000000 -0.46%, #5E41F1 45.54%)',
-              WebkitBackgroundClip: 'text',
-              backgroundClip: 'text',
-              fontFamily: 'Roboto, sans-serif',
-              WebkitTextFillColor: 'transparent',
-              color: 'transparent', /* Fallback */
-              display: 'inline-block',
-            }}
-            initial="hidden"
-            animate="visible"
-            variants={titleVariants}
-          >
-            Pitchmatter
-          </motion.h1>
+        <div className="w-full lg:w-1/2 p-8 lg:p-10 flex flex-col">
+        <motion.h1 
+  className="text-3xl lg:text-5xl font-bold mb-12 tracking-wide"
+  style={{
+    backgroundImage: 'linear-gradient(80.78deg, #000000 -0.46%, #5E41F1 60.54%)',
+    WebkitBackgroundClip: 'text',
+    backgroundClip: 'text',
+    fontFamily: 'Roboto, sans-serif',
+    WebkitTextFillColor: 'transparent',
+    color: 'transparent', /* Fallback */
+    width: '353px',
+    display: 'inline-block',
+    marginLeft: '-10px',
+    letterSpacing: '0.01em',
+    textAlign: 'left',
+    fontWeight: '800',
+    lineHeight: '1.1'
+  }}
+  initial="hidden"
+  animate="visible"
+  variants={titleVariants}
+>
+  Pitchmatter
+</motion.h1>
           <motion.div 
-            className="bg-white rounded-xl shadow-md w-full mx-auto lg:mx-0 lg:-ml-10 lg:-mt-10"
+            // className="bg-white rounded-xl shadow-md w-full"
             style={{ 
               maxWidth: '516px',
+               marginLeft: '-40px', // Move the entire card 40px to the left
+               marginTop: '-40px'   // And 40px up
             }}
             initial="hidden"
             animate="visible"
