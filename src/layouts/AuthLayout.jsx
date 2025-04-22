@@ -70,75 +70,71 @@ const AuthLayout = ({ children }) => {
   }, [location.pathname]);
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-50 py-6">
-      <div className="w-full max-w-7xl flex flex-col lg:flex-row  overflow-hidden">
+    <div className="flex justify-center items-center min-h-screen bg-gray-50 py-2 px-4 sm:px-6 md:px-8">
+      <div className="w-full max-w-6xl flex flex-col lg:flex-row overflow-hidden">
         <motion.div 
-          className="hidden lg:block lg:w-1/2 relative"
+          className="hidden lg:flex lg:w-1/2 lg:justify-center lg:items-center"
           initial="hidden"
           animate="visible"
           variants={illustrationVariants}
         >
           <div 
-            className="rounded-3xl overflow-hidden"
+            className="rounded-3xl overflow-hidden shadow-lg my-6"
             style={{
-              position: 'relative',
-              width: '530px', 
-              height: '580px',
-              top: '0',
-              left: '0',
-              margin: '20px 40px 20px 20px'
+              height: 'calc(110vh - 120px)',
+              maxHeight: '650px',
+              width: '100%',
+              maxWidth: '530px'
             }}
           >
             <img 
               src={getIllustrationPath()} 
               alt="Authentication illustration" 
-              className="w-full h-full object-cover"
-              style={{ 
-                borderRadius: '40px',
-              }}
+              className="w-full h-full object-cover rounded-3xl"
             />
           </div>
         </motion.div>
-        <div className="w-full lg:w-1/2 p-8 lg:p-10 flex flex-col">
-        <motion.h1 
-  className="text-3xl lg:text-5xl font-bold mb-12 tracking-wide"
-  style={{
-    backgroundImage: 'linear-gradient(80.78deg, #000000 -0.46%, #5E41F1 60.54%)',
-    WebkitBackgroundClip: 'text',
-    backgroundClip: 'text',
-    fontFamily: 'Roboto, sans-serif',
-    WebkitTextFillColor: 'transparent',
-    color: 'transparent', /* Fallback */
-    width: '353px',
-    display: 'inline-block',
-    marginLeft: '-10px',
-    letterSpacing: '0.01em',
-    textAlign: 'left',
-    fontWeight: '800',
-    lineHeight: '1.1'
-  }}
-  initial="hidden"
-  animate="visible"
-  variants={titleVariants}
->
-  Pitchmatter
-</motion.h1>
-          <motion.div 
-            // className="bg-white rounded-xl shadow-md w-full"
-            style={{ 
-              maxWidth: '516px',
-               marginLeft: '-40px', // Move the entire card 40px to the left
-               marginTop: '-40px'   // And 40px up
+        <div className="w-full lg:w-1/2 flex justify-center items-center">
+          <div 
+            className="bg-white rounded-3xl shadow-lg p-6 sm:p-8 lg:p-4 w-full"
+            style={{
+              height: 'calc(110vh - 120px)',
+              maxHeight: '650px',
+              maxWidth: '530px'
             }}
-            initial="hidden"
-            animate="visible"
-            variants={contentVariants}
-            key={location.pathname}
           >
-            <div className="p-6 space-y-6">
-              {children || <Outlet />}
-            </div>
-          </motion.div>
+            <motion.h1 
+              className="text-3xl lg:text-5xl font-bold mb-4 tracking-wide"
+              style={{
+                backgroundImage: 'linear-gradient(80.78deg, #000000 -0.46%, #5E41F1 60.54%)',
+                WebkitBackgroundClip: 'text',
+                backgroundClip: 'text',
+                fontFamily: 'Roboto, sans-serif',
+                WebkitTextFillColor: 'transparent',
+                color: 'transparent', /* Fallback */
+                letterSpacing: '0.01em',
+                textAlign: 'left',
+                fontWeight: '800',
+                lineHeight: '1.1'
+              }}
+              initial="hidden"
+              animate="visible"
+              variants={titleVariants}
+            >
+              Pitchmatter
+            </motion.h1>
+            <motion.div 
+              className="h-full "
+              initial="hidden"
+              animate="visible"
+              variants={contentVariants}
+              key={location.pathname}
+            >
+              <div className="space-y-6">
+                {children || <Outlet />}
+              </div>
+            </motion.div>
+          </div>
         </div>
       </div>
     </div>

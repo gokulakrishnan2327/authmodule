@@ -41,7 +41,7 @@ const StartLoginPage = () => {
 
   return (
     <AuthLayout>
-      <div className="w-full max-w-lg mx-auto text-left" style={{ height: "450px" }}>
+      <div className="w-full max-w-lg mx-auto text-left mt-12" style={{ height: "450px" }}>
         <div className="mb-3 h-14">
           <h1 className="font-roboto text-3xl font-semibold leading-tight tracking-tighter text-left text-[#2D3436]">
             Welcome!
@@ -71,7 +71,7 @@ const StartLoginPage = () => {
           </div>
         </div>
         
-        <form onSubmit={handleSubmit} className="space-y-3">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <Input
               id="email"
@@ -91,13 +91,13 @@ const StartLoginPage = () => {
             size="large"
             fullWidth
             loading={loading}
-            className="bg-[#5E41F1] hover:bg-[#4933c8] font-roboto transition-colors h-12"
+            className="bg-[#5E41F1] hover:bg-[#4933c8] font-roboto transition-colors h-10"
           >
             Continue
           </Button>
         </form>
         
-        <div className="mt-3 w-full max-w-[510px] mx-auto">
+        <div className="mt-8 w-full max-w-[510px] mx-auto">
           <p className="font-roboto font-medium text-sm leading-5 tracking-wide text-left">
             By accessing your account, you agree to our{' '}
             <a href="/terms" className="font-medium text-sm leading-5 text-indigo-500 hover:underline">
@@ -110,14 +110,14 @@ const StartLoginPage = () => {
           </p>
         </div>
         
-        <div className="mt-3 text-left">
+        {/* <div className="mt-3 text-left">
           <p className="font-roboto text-base tracking-wider text-[#64646D]">
             Don't have an account?{' '}
             <a href="/auth/register" className="text-[#5D40ED] font-roboto font-bold tracking-wider inline-block">
               Register
             </a>
           </p>
-        </div>
+        </div> */}
       </div>
     </AuthLayout>
   );

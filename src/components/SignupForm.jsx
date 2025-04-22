@@ -105,7 +105,6 @@ const SignupForm = () => {
       'phoneNumber', 
       'role', 
       'password', 
-      'confirmPassword'
     ]);
     
     if (!validationResult.isValid) {
@@ -129,6 +128,7 @@ const SignupForm = () => {
       .unwrap()
       .then(() => {
         setShowSuccessModal(true);
+        navigate('/onboarding'); // Directly navigate to onboarding
         console.log('Signup successful');
       })
       .catch((error) => {
@@ -167,79 +167,59 @@ const SignupForm = () => {
 
       <form className="space-y-4" onSubmit={handleSubmit}>
         <div className="relative">
-          <div className="relative">
-            <label htmlFor="email" className="absolute text-xs font-roboto font-normal text-[#64646D] left-3 top-1.5 px-1 bg-white z-10">
-              Email address
-            </label>
-            <input
+         
+            <Input
               id="email"
               name="email"
               type="email"
               value={formData.email}
               onChange={handleChange}
               disabled
-              className="w-full h-11 px-4 pt-5 pb-1 rounded-lg bg-white border border-gray-300 text-[#171725] font-poppins font-medium text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              // className="w-full h-11 px-4 pt-5 pb-1 rounded-lg bg-white border border-gray-300 text-[#171725] font-poppins font-medium text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
             />
-          </div>
           {renderErrorTooltip('email')}
         </div>
         
         <div className="relative">
-          <div className="relative">
-            <label 
-              htmlFor="fullName" 
-              className={`absolute text-xs font-roboto font-normal text-[#64646D] left-3 top-1.5 px-1 bg-white z-10 transition-opacity duration-150 ${focusedField === 'fullName' || formData.fullName ? 'opacity-100' : 'opacity-0'}`}
-            >
-              Full Name
-            </label>
-            <input
+            
+            <Input
               id="fullName"
               name="fullName"
               type="text"
               value={formData.fullName}
               onChange={handleChange}
               placeholder={focusedField === 'fullName' ? '' : 'Full Name'}
-              className="w-full h-11 px-4 pt-5 pb-1 rounded-lg bg-white border border-[#94949B] text-black font-poppins font-medium text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              // className="w-full h-11 px-4 pt-5 pb-1 rounded-lg bg-white border border-[#94949B] text-black font-poppins font-medium text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
               onFocus={() => setFocusedField('fullName')}
               onBlur={() => setFocusedField(null)}
             />
-          </div>
           {renderErrorTooltip('fullName')}
         </div>
         
         <div className="relative">
-          <div className="relative">
-            <label 
-              htmlFor="password" 
-              className={`absolute text-xs font-roboto font-normal text-[#64646D] left-3 top-1.5 px-1 bg-white z-10 transition-opacity duration-150 ${focusedField === 'password' || formData.password ? 'opacity-100' : 'opacity-0'}`}
-            >
-              Password
-            </label>
-            <input
+          
+            <Input
               id="password"
               name="password"
               type="password"
               value={formData.password}
               onChange={handleChange}
               placeholder={focusedField === 'password' ? '' : 'Password'}
-              className="w-full h-11 px-4 pt-5 pb-1 rounded-lg bg-white border border-[#94949B] text-black font-poppins font-medium text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              // className="w-full h-11 px-4 pt-5 pb-1 rounded-lg bg-white border border-[#94949B] text-black font-poppins font-medium text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
               onFocus={() => setFocusedField('password')}
               onBlur={() => setFocusedField(null)}
             />
-          </div>
           {renderErrorTooltip('password')}
           <PasswordStrengthIndicator password={formData.password} />
         </div>
         
         <div className="grid grid-cols-4 gap-2">
           <div className="col-span-1 relative">
-            <label className="absolute text-xs font-roboto font-normal text-[#64646D] left-3 top-1.5 px-1 bg-white z-10">
-              Code
-            </label>
+           
             <select
               id="countryCode"
               name="countryCode"
-              className="w-full h-11 rounded-lg border border-[#899197] pt-5 pb-1 px-3 text-[#091E42] font-roboto font-medium text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
+              className="w-full h-10 rounded-lg border border-[#899197] pt-0 pb-0 px-4 text-[#091E42] font-roboto font-medium text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
               value={formData.countryCode}
               onChange={handleChange}
             >
@@ -252,25 +232,18 @@ const SignupForm = () => {
           </div>
           
           <div className="col-span-3 relative">
-            <div className="relative">
-              <label 
-                htmlFor="phoneNumber" 
-                className={`absolute text-xs font-roboto font-normal text-[#64646D] left-3 top-1.5 px-1 bg-white z-10 transition-opacity duration-150 ${focusedField === 'phoneNumber' || formData.phoneNumber ? 'opacity-100' : 'opacity-0'}`}
-              >
-                Phone Number
-              </label>
-              <input
+            
+              <Input
                 id="phoneNumber"
                 name="phoneNumber"
                 type="tel"
                 value={formData.phoneNumber}
                 onChange={handleChange}
                 placeholder={focusedField === 'phoneNumber' ? '' : 'Phone Number'}
-                className="w-full h-11 px-4 pt-5 pb-1 rounded-lg bg-white border border-[#899197] text-black font-roboto font-medium text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                // className="w-full h-11 px-4 pt-5 pb-1 rounded-lg bg-white border border-[#899197] text-black font-roboto font-medium text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 onFocus={() => setFocusedField('phoneNumber')}
                 onBlur={() => setFocusedField(null)}
               />
-            </div>
             {renderErrorTooltip('phoneNumber')}
           </div>
         </div>
@@ -279,7 +252,7 @@ const SignupForm = () => {
           <div className="relative">
             <label 
               htmlFor="role" 
-              className={`absolute text-xs font-roboto font-normal text-[#64646D] left-3 top-1.5 px-1 bg-white z-10 transition-opacity duration-150 ${focusedField === 'role' || formData.role ? 'opacity-100' : 'opacity-0'}`}
+              className={`absolute text-xs font-roboto font-normal text-[#64646D] left-3 top-1.5 px-0 bg-white z-10 transition-opacity duration-150 ${focusedField === 'role' || formData.role ? 'opacity-100' : 'opacity-0'}`}
             >
               Role
             </label>
@@ -287,7 +260,7 @@ const SignupForm = () => {
               <select
                 id="role"
                 name="role"
-                className="w-full h-11 pl-4 pr-10 pt-5 pb-1 text-sm bg-white border border-[#94949B] rounded-lg appearance-none focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                className="w-full h-10 pl-4 pr-10 pt-0 pb-0 text-sm bg-white border border-[#94949B] rounded-lg appearance-none focus:outline-none focus:ring-1 focus:ring-indigo-500"
                 value={formData.role}
                 onChange={handleChange}
                 onFocus={() => setFocusedField('role')}

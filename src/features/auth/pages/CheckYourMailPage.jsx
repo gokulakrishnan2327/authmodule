@@ -14,9 +14,9 @@ const CheckYourMailPage = () => {
   
   return (
     <AuthLayout>
-      <div className="w-full max-w-lg mx-auto text-left">
+      <div className="w-full max-w-lg mx-auto text-left mt-6">
         {/* Email verification illustration with animated paper plane */}
-        <div className="flex justify-center mb-4">
+        <div className="flex justify-center mb-8">
           <svg width="180" height="160" viewBox="0 0 294 268" fill="none" xmlns="http://www.w3.org/2000/svg">
             {/* Paper Rocket */}
             <path d="M292 45.43L49.94 84.17L1 181.23L201.45 210.84L292 45.43Z" fill="white" stroke="#6B63FF" strokeWidth="2"/>
@@ -45,17 +45,17 @@ const CheckYourMailPage = () => {
 
         {/* Heading section with reduced height */}
         <div className="mb-4 h-18">
-          <h1 className="font-roboto text-xl font-semibold leading-tight tracking-tight text-left text-[#2D3436]">
-            Check your mail
+        <h1 className="font-roboto text-3xl font-semibold leading-relaxed tracking-tighter text-left text-[#2D3436]">
+        Check your mail
           </h1>
-          <p className="text-[#454551] mt-1 font-roboto text-left text-medium font-medium tracking-normal leading-5">
+          <p className="text-[#454551] mt-1.5 font-roboto text-left text-base font-medium tracking-wide leading-6">
             We have sent a password recovery instructions to your email.{' '}
             <span className="font-medium">{email}</span>
           </p>
         </div>
         
         <div className="w-full">
-          <div className="bg-white py-5 px-4">
+          <div className="bg-white py-5 px-0">
             {/* Action button with optimized spacing */}
             <div>
               <Button 

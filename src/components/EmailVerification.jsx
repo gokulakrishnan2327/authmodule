@@ -122,8 +122,8 @@ const EmailVerification = () => {
   
   return (
     <AuthLayout>
-      <div className="w-full max-w-lg mx-auto text-left min-h-[460px] px-4 sm:px-0">
-        <div className="mb-6">
+      <div className="w-full max-w-lg mx-auto text-left mt-14 sm:px-0">
+        <div className="mb-8">
           <Link 
             to="/auth/register" 
             className="inline-flex items-center text-[#5D40ED] hover:text-indigo-700 font-roboto font-semibold text-sm tracking-[0.03em] transition-colors duration-200 gap-2"
@@ -138,7 +138,7 @@ const EmailVerification = () => {
         </div>
 
         {/* Header section with compact typography */}
-        <div className="mb-5 space-y-1.5">
+        <div className="mb-6 space-y-1.5">
           <h1 className="font-roboto font-semibold text-2xl md:text-3xl leading-tight tracking-[-0.02em] text-[#2D3436]">
             Verify Your Identity
           </h1>
@@ -155,21 +155,15 @@ const EmailVerification = () => {
   <div className="flex items-center w-full">
     {isEditingEmail ? (
       <div className="flex items-center w-full gap-2">
-        <div className="relative w-full">
-          <label 
-            htmlFor="email" 
-            className="absolute top-1 left-3 px-1 text-xs font-roboto font-normal tracking-[1%] leading-[100%] text-[#5D40ED] z-10"
-          >
-            Email Address
-          </label>
-          <input
+        
+          <Input
             id="email"
             type="email"
             value={email}
+            placeholder="Email address"
             onChange={handleEmailChange}
-            className="w-full h-12 px-4 pt-5 pb-1 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
+            // className="w-full h-12 px-4 pt-5 pb-1 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500"
           />
-        </div>
         <button
           onClick={saveEmail}
           className="ml-2 text-indigo-600 hover:text-indigo-800 text-sm font-bold whitespace-nowrap transition-colors duration-200"
@@ -180,14 +174,9 @@ const EmailVerification = () => {
       </div>
     ) : (
       <div className="relative w-full">
-        <label 
-          htmlFor="email-display" 
-          className="absolute top-1 left-3 px-1 text-xs font-roboto font-normal tracking-[1%] leading-[100%] text-[#5D40ED] z-10"
-        >
-          Email Address
-        </label>
-        <div className="flex items-center w-full h-12 border border-gray-300 rounded-md pl-3 pr-2 bg-white shadow-sm">
-          <span className="flex-grow font-medium text-gray-800 truncate mr-2 pt-3">{email || 'your email address'}</span>
+        
+        <div className="flex items-center w-full h-10 border border-gray-300 rounded-md pl-3 pr-2 bg-white shadow-sm">
+          <span className="flex-grow font-medium text-gray-800 truncate mr-2 pt-0">{email || 'your email address'}</span>
           <button
             onClick={() => setIsEditingEmail(true)}
             className="text-indigo-600 hover:text-indigo-800 font-medium text-sm transition-colors duration-200"
@@ -250,7 +239,7 @@ const EmailVerification = () => {
         )}
 
         {/* Verification form with improved spacing and input field */}
-        <form className="space-y-4">
+        <form className="space-y-6">
           <div>
             <Input
               id="token"
@@ -271,7 +260,7 @@ const EmailVerification = () => {
             size="large"
             fullWidth
             loading={loading}
-            className="bg-indigo-600 hover:bg-indigo-800 font-medium transition-colors duration-200 h-12 rounded-md"
+            className="bg-indigo-600 hover:bg-indigo-800 font-medium transition-colors duration-200 h-10 rounded-md"
           >
             Continue
           </Button>

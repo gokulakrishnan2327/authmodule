@@ -62,7 +62,6 @@ const generateVerificationCode = (email) => {
 };
 
 export const handlers = [
-  // Sign Up (from file 2)
   rest.post('/api/auth/signup', (req, res, ctx) => {
     const { fullName, email, password, referralCode } = req.body;
     

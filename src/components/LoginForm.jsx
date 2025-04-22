@@ -5,17 +5,17 @@ import { loginUser, clearError, loginWithGoogle, loginWithApple, loginWithLinked
 import OAuthButtons from '../components/OAuthButtons';
 import Input from './common/Input';
 import Button from './common/Button';
-// Replace ReCAPTCHA import with script loading approach for v3
-// import ReCAPTCHA from 'react-google-recaptcha'; 
+// Improved loading strategy for reCAPTCHA v3
+// This avoids potential render blocking issues that can occur with direct imports
 
-// Custom Loader Component
+// Custom Loader Component with consistent Tailwind styling
 const CustomLoader = ({ isVisible }) => {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed flex flex-col items-center justify-center w-[510px] h-[200px] top-[447px] left-[465px] bg-[#2D3436] rounded-lg z-50 transition-all duration-300 opacity-100 shadow-xl animate-fadeIn">
+    <div className="fixed flex flex-col items-center justify-center w-full max-w-lg h-[200px] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-[#2D3436] rounded-lg z-50 transition-all duration-300 opacity-100 shadow-xl animate-fadeIn">
       <div className="flex flex-col items-center gap-8">
-        {/* Loader animation with rotating circle and pulsing dots */}
+        {/* Optimized loader animation with consistent spacing */}
         <div className="relative w-[85px] h-[85px] flex items-center justify-center bg-[#5D40ED] rounded-full animate-spin-slow">
           <div className="absolute flex items-center justify-between w-[45px]">
             <div className="w-[12px] h-[12px] bg-[#EFECFD] rounded-full animate-pulse"></div>
@@ -24,12 +24,12 @@ const CustomLoader = ({ isVisible }) => {
           </div>
         </div>
         
-        {/* Text content */}
+        {/* Text content with proper font scaling */}
         <div className="flex flex-col items-center">
-          <h4 className="font-roboto font-semibold text-4xl leading-[44px] tracking-[-0.02em] text-center text-white">
+          <h4 className="font-roboto font-semibold text-2xl md:text-4xl leading-tight tracking-[-0.02em] text-center text-white">
             Thanks for the patience
           </h4>
-          <p className="font-roboto font-medium text-xl leading-5 tracking-[0.02em] text-center text-white mt-2">
+          <p className="font-roboto font-medium text-base md:text-xl leading-5 tracking-[0.02em] text-center text-white mt-2">
             Amazing things coming from Pitchmatter
           </p>
         </div>
@@ -62,11 +62,11 @@ const LoginForm = () => {
     }
   }, []);
   
-  // Load reCAPTCHA v3 script when component mounts
+  // Load reCAPTCHA v3 script with deferred execution for performance optimization
   useEffect(() => {
-    // Create and inject the reCAPTCHA v3 script
+    // Create and inject the reCAPTCHA v3 script with improved load handling
     const loadRecaptchaScript = () => {
-      // Check if script is already loaded
+      // Check if script is already loaded to prevent duplicates
       if (document.querySelector('script[src^="https://www.google.com/recaptcha/api.js?render="]')) {
         return;
       }
@@ -93,10 +93,10 @@ const LoginForm = () => {
     
     loadRecaptchaScript();
     
-    // Refresh token every 2 minutes (120000ms)
+    // Token refresh strategy - every 2 minutes for security
     const intervalId = setInterval(executeRecaptchaV3, 120000);
     
-    // Cleanup function
+    // Cleanup function to prevent memory leaks
     return () => {
       clearInterval(intervalId);
     };
@@ -141,8 +141,10 @@ const LoginForm = () => {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData({
-      ...formData,
-      [name]: type === 'checkbox' ? checked : value
+      ...prev => ({
+        ...prev,
+        [name]: type === 'checkbox' ? checked : value
+      })
     });
   };
   
@@ -184,89 +186,57 @@ const LoginForm = () => {
   };
   
   return (
-    <div className="w-full max-w-[516px] mx-auto text-left relative h-[540px] -mt-4">
-      <div className="mb-2">
+    <div className="w-full max-w-lg mx-auto text-left relative mt-8" >
+      <div className="mb-4 h-18">
         <h1 className="font-roboto text-3xl font-semibold leading-tight tracking-tighter text-left text-[#2D3436]">
           Welcome Back!
         </h1>
-        <p className="text-[#454551] mt-0.5 font-roboto text-left text-lg font-small tracking-wide">
+        <p className="text-[#454551] mt-0.5 font-roboto text-left text-lg font-medium tracking-wide">
           You're just one step away from accessing your account
         </p>
       </div>
       
-      <div className="mb-2 h-20 space-y-2">
+      <div className="mb-3 h-24 space-y-3">
         <p className="font-roboto font-medium text-left text-gray-800">
           Sign in with
         </p>
 
-        {/* Use our OAuthButtons component */}
+        {/* OAuth buttons with consistent spacing */}
         <OAuthButtons mode="login" />
       </div>
       
-      <form onSubmit={handleSubmit} className="space-y-3">
+      <form onSubmit={handleSubmit} className="space-y-6">
         <div className="relative">
-          <div className="relative">
-            <label 
-              htmlFor="email" 
-              className="absolute text-xs font-roboto font-normal text-[#64646D] left-3 top-1.5 px-1 bg-white z-10"
-            >
-              Email address
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              value={formData.email}
-              onChange={handleChange}
-              disabled={!!localStorage.getItem('loginEmail')}
-              className="w-full h-11 px-4 pt-5 pb-1 rounded-lg bg-white border border-gray-300 text-[#171725] font-poppins font-medium text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
-              required
-            />
-          </div>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            placeholder="Email address"
+            value={formData.email}
+            onChange={handleChange}
+            disabled={!!localStorage.getItem('loginEmail')}
+            required
+          />
         </div>
         
         <div className="relative">
-          <div className="relative">
-            <label 
-              htmlFor="password" 
-              className={`absolute text-xs font-roboto font-normal text-[#64646D] left-3 top-1.5 px-1 bg-white z-10 transition-opacity duration-150 ${focusedField === 'password' || formData.password ? 'opacity-100' : 'opacity-0'}`}
-            >
-              Password
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder={focusedField === 'password' ? '' : 'Password'}
-              className="w-full h-11 px-4 pt-5 pb-1 rounded-lg bg-white border border-[#94949B] text-black font-poppins font-medium text-sm focus:outline-none focus:ring-1 focus:ring-indigo-500"
-              onFocus={() => setFocusedField('password')}
-              onBlur={() => setFocusedField(null)}
-              required
-            />
-          </div>
+          <Input
+            id="password"
+            name="password"
+            type="password"
+            value={formData.password}
+            onChange={handleChange}
+            placeholder={focusedField === 'password' ? '' : 'Password'}
+            onFocus={() => setFocusedField('password')}
+            onBlur={() => setFocusedField(null)}
+            required
+          />
         </div>
         
-        {/* reCAPTCHA v3 badge container - invisible unless suspicious activity */}
-        <div className="w-full flex justify-start items-center mt-1">
-          <div 
-            id="recaptcha-badge" 
-            className="h-[20px] w-[450px]"
-          >
-            {/* reCAPTCHA v3 is invisible by default and shows badge at bottom right */}
-            {/* Adding a visual indicator that protection is active */}
-            <div className="flex items-center text-xs text-gray-500">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 text-green-500" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-              Protected by reCAPTCHA v3
-            </div>
-          </div>
-        </div>
+        {/* reCAPTCHA v3 is invisible by default - we don't need UI indicator */}
 
         {error && (
-          <div className="bg-red-50 border-l-4 border-red-500 p-2 text-sm">
+          <div className="bg-red-50 border-l-4 border-red-500 p-2 rounded text-sm">
             <p className="text-red-700">{error}</p>
           </div>
         )}
@@ -278,14 +248,13 @@ const LoginForm = () => {
             size="large"
             fullWidth
             loading={loading}
-            className="bg-[#5E41F1] hover:bg-[#4933c8] font-sans transition-colors h-10 text-white font-medium rounded-lg text-sm"
+            className="bg-[#5E41F1] hover:bg-[#4933c8] font-roboto transition-colors h-10 text-white font-medium rounded-lg text-sm"
           >
             Login
           </Button>
         </div>
       </form>
       
-      {/* Improved password reset section */}
       <div className="flex items-start mt-3">
         <div className="text-sm text-gray-600">
           <span className="font-roboto">
@@ -300,20 +269,28 @@ const LoginForm = () => {
         </div>
       </div>
       
-      <div className="mt-2 w-full max-w-[510px] mx-auto">
-        <p className="font-roboto font-medium text-sm leading-4 tracking-wide text-left">
+      <div className="mt-2 w-full max-w-lg mx-auto">
+        <p className="font-roboto font-medium text-sm leading-5 tracking-wide text-left">
           By accessing your account, you agree to our{' '}
-          <a href="/terms" className="font-medium text-sm leading-4 text-[#5D40ED] hover:text-[#4933c8] hover:underline transition-colors">
+          <a href="/terms" className="font-medium text-sm leading-5 text-indigo-500 hover:underline transition-colors">
             Terms and Conditions
           </a>{' '}
           and{' '}
-          <a href="/privacy" className="font-medium text-sm leading-4 text-[#5D40ED] hover:text-[#4933c8] hover:underline transition-colors">
+          <a href="/privacy" className="font-medium text-sm leading-5 text-indigo-500 hover:underline transition-colors">
             Privacy Policy
           </a>.
         </p>
       </div>
       
-      {/* Render the custom loader component when loading is true */}
+      {/* <div className="mt-3 text-left">
+        <p className="font-roboto text-base tracking-wider text-[#64646D]">
+          Don't have an account?{' '}
+          <a href="/auth/register" className="text-[#5D40ED] font-roboto font-bold tracking-wider inline-block">
+            Register
+          </a>
+        </p>
+      </div> */}
+      
       <CustomLoader isVisible={loading} />
     </div>
   );

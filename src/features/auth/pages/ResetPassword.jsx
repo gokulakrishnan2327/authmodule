@@ -6,6 +6,7 @@ import { doPasswordsMatch } from '../../../utils/validators';
 import Button from '../../../components/common/Button';
 import Loader from '../../../components/common/Loader';
 import AuthLayout from '../../../layouts/AuthLayout';
+import Input from '../../../components/common/Input';
 
 const ResetPassword = () => {
   const navigate = useNavigate();
@@ -119,9 +120,9 @@ const ResetPassword = () => {
   
   return (
     <AuthLayout>
-      <div className="w-full max-w-lg mx-auto text-left" style={{ height: "480px" }}>
+      <div className="w-full max-w-lg mx-auto text-left mt-10" style={{ height: "480px" }}>
         <div className="mb-6 h-20">
-          <h1 className="font-roboto text-2xl font-semibold leading-relaxed tracking-tighter text-left text-[#2D3436]">
+          <h1 className="font-roboto text-3xl font-semibold leading-relaxed tracking-tighter text-left text-[#2D3436]">
             Create new password
           </h1>
           <p className="text-[#454551] mt-1.5 font-roboto text-left text-base font-medium tracking-wide leading-6">
@@ -130,7 +131,7 @@ const ResetPassword = () => {
         </div>
 
         <div className="mt-10 w-full">
-          <div className="bg-white py-8 px-4">
+          <div className="bg-white py-8 px-0">
             {loading && (
               <div className="flex justify-center my-6">
                 <Loader />
@@ -180,7 +181,7 @@ const ResetPassword = () => {
                     Password (minimum length 8 characters)
                   </label>
                   <div className="mt-1.5 relative">
-                    <input
+                    <Input
                       id="newPassword"
                       name="newPassword"
                       type={showPassword ? "text" : "password"}
@@ -188,7 +189,7 @@ const ResetPassword = () => {
                       placeholder="Enter new password"
                       value={formData.newPassword}
                       onChange={handleChange}
-                      className="appearance-none block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                      // className="appearance-none block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                     />
                     {/* {formData.newPassword && (
                       <button
@@ -210,7 +211,7 @@ const ResetPassword = () => {
                     Confirm Password
                   </label>
                   <div className="mt-1.5 relative">
-                    <input
+                    <Input
                       id="confirmPassword"
                       name="confirmPassword"
                       type={showConfirmPassword ? "text" : "password"}
@@ -218,7 +219,7 @@ const ResetPassword = () => {
                       placeholder="Confirm new password"
                       value={formData.confirmPassword}
                       onChange={handleChange}
-                      className="appearance-none block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                      // className="appearance-none block w-full px-3 py-3 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                     />
                     {/* {formData.confirmPassword && (
                       <button
@@ -241,7 +242,7 @@ const ResetPassword = () => {
                     variant="primary"
                     fullWidth
                     disabled={loading}
-                    className="bg-[#5E41F1] hover:bg-[#4933c8] font-roboto transition-colors h-12"
+                    className="bg-[#5E41F1] hover:bg-[#4933c8] font-roboto transition-colors h-10"
                   >
                     <span className="mx-4 font-large">Reset Password</span>
                   </Button>

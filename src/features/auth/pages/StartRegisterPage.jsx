@@ -55,8 +55,8 @@ const StartRegisterPage = () => {
 
   return (
     <AuthLayout>
-      <div className="w-full max-w-lg mx-auto text-left" style={{ height: "450px" }}>
-        <div className="mb-3 h-14">
+      <div className="w-full max-w-lg mx-auto text-left mt-10" style={{ height: "450px" }}>
+        <div className="mb-3 h-18">
           <h1 className="font-roboto text-3xl font-semibold leading-tight tracking-tighter text-left text-[#2D3436]">
             Create Your Account
           </h1>
@@ -65,7 +65,7 @@ const StartRegisterPage = () => {
           </p>
         </div>
 
-        <div className="mb-3 h-24 space-y-3">
+        <div className="mb-3 h-28 space-y-3">
           <p className="font-roboto font-medium text-left text-gray-800">
             Sign in with
           </p>
@@ -85,8 +85,8 @@ const StartRegisterPage = () => {
           </div>
         </div>
         
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <div>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="w-full">
             <Input
               id="email"
               name="email"
@@ -96,6 +96,7 @@ const StartRegisterPage = () => {
               onChange={handleEmailChange}
               error={emailError}
               required
+              className="w-full"
             />
           </div>
           
@@ -105,7 +106,7 @@ const StartRegisterPage = () => {
             size="large"
             fullWidth
             loading={loading}
-            className="bg-[#5E41F1] hover:bg-[#4933c8] font-roboto transition-colors h-12"
+            className="bg-[#5E41F1] hover:bg-[#4933c8] font-roboto transition-colors h-10"
           >
             Continue
           </Button>
