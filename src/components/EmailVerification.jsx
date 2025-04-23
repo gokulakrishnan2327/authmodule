@@ -123,19 +123,19 @@ const EmailVerification = () => {
   return (
     <AuthLayout>
       <div className="w-full max-w-lg mx-auto text-left mt-14 sm:px-0">
-        <div className="mb-8">
-          <Link 
-            to="/auth/register" 
-            className="inline-flex items-center text-[#5D40ED] hover:text-indigo-700 font-roboto font-semibold text-sm tracking-[0.03em] transition-colors duration-200 gap-2"
-          >
-            <div className="flex items-center justify-center bg-[#5D40ED] rounded-full p-0.5 w-5 h-5">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <span>Go Back</span>
-          </Link>
+      <div className="mb-8">
+      <Link 
+        to="/auth/register" 
+        className="inline-flex items-center text-[black] hover:text-indigo-700 font-roboto font-semibold text-sm tracking-[0.03em] transition-colors duration-200 gap-3"
+      >
+        <div className="flex items-center justify-center bg-[#fffff] rounded-full p-0.5 w-6 h-6 hover:text-indigo-700 font-roboto font-semibold text-sm tracking-[0.03em] transition-colors duration-200 gap-3">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-black" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+          </svg>
         </div>
+        <span>Go Back</span>
+      </Link>
+    </div>
 
         {/* Header section with compact typography */}
         <div className="mb-6 space-y-1.5">

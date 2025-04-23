@@ -146,8 +146,8 @@ const SignupForm = () => {
     
     return (
       <div className="absolute right-0 mt-1 z-10">
-        <div className="bg-white text-[#454551] rounded-lg p-2 w-64 md:w-72 shadow-lg relative">
-          <div className="absolute -top-2 right-4 w-3 h-3 bg-white transform rotate-45"></div>
+        <div className="bg-red-200 text-black rounded-lg p-2 w-64 md:w-72 shadow-lg relative">
+          <div className="absolute -top-2 right-4 w-3 h-3 bg-red-200 transform rotate-45"></div>
           <p className="text-xs">{errors[fieldName]}</p>
         </div>
       </div>
